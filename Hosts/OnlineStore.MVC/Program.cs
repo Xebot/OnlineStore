@@ -1,3 +1,7 @@
+using Microsoft.AspNetCore.Connections;
+using OnlineStore.ComponentRegistrar;
+using StackExchange.Redis;
+
 namespace OnlineStore.MVC
 {
     public class Program
@@ -8,6 +12,20 @@ namespace OnlineStore.MVC
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            OnlineStoreRegistrar.AddComponents(builder.Services, builder.Configuration);
+
+            builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+            {
+                var configuration = ConfigurationOptions.Parse(builder.Configuration.GetConnectionString("Redis"), true);
+                return ConnectionMultiplexer.Connect(configuration);
+            });
+
+            builder.Services.AddSingleton<IDatabase>(sp =>
+            {
+                var connectionMultiplexer = sp.GetRequiredService<IConnectionMultiplexer>();
+                return connectionMultiplexer.GetDatabase();
+            });
 
             var app = builder.Build();
 
