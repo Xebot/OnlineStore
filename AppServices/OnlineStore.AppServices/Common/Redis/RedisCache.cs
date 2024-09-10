@@ -1,4 +1,4 @@
-﻿using StackExchange.Redis;
+﻿using StackExchange.Redis.Extensions.Core.Abstractions;
 
 namespace OnlineStore.AppServices.Common.Redis
 {
@@ -7,25 +7,30 @@ namespace OnlineStore.AppServices.Common.Redis
     /// </summary>
     public sealed class RedisCache : IRedisCache
     {
-        private readonly IDatabase _redisDb; 
+        private readonly IRedisDatabase _redisDb; 
 
         /// <inheritdoc/>
-        public RedisCache(IDatabase redisDb)
+        public RedisCache(IRedisDatabase redisDb)
         {
             _redisDb = redisDb;
         }
 
         /// <inheritdoc/>
-        public async Task<string> GetAsync(string key)
+        public Task<T> GetAsync<T>(string key, CancellationToken cancellation)
         {
-            var result = await _redisDb.StringGetAsync(key);
-            return result;
+            return _redisDb.GetAsync<T>(key);
         }
 
         /// <inheritdoc/>
-        public Task SetStringAsync(string key, string value)
+        public async Task RemoveAsync(string key, CancellationToken cancellation)
         {
-            return _redisDb.StringSetAsync(key, value);
+            await _redisDb.RemoveAsync(key);
+        }
+
+        /// <inheritdoc/>
+        public Task SetAsync<T>(string key, T value, TimeSpan lifeTime, CancellationToken cancellation)
+        {
+            return _redisDb.AddAsync<T>(key, value, lifeTime);
         }
     }
 }

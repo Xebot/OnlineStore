@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-namespace OnlineStore.AppServices.Common
+﻿namespace OnlineStore.AppServices.Common
 {
     /// <summary>
     /// Интерфейс общего репозитория.

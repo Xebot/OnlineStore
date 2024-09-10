@@ -1,12 +1,16 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OnlineStore.AppServices.Attributes.Repositories;
 using OnlineStore.AppServices.Attributes.Services;
+using OnlineStore.AppServices.Common.CacheService;
 using OnlineStore.AppServices.Common.Redis;
 using OnlineStore.DataAccess.Attributes.Repositories;
 using OnlineStore.DataAccess.Common;
 using OnlineStore.Infrastructure.Mappings;
+using StackExchange.Redis.Extensions.Core.Configuration;
+using StackExchange.Redis.Extensions.Newtonsoft;
 
 namespace OnlineStore.ComponentRegistrar
 {
@@ -18,26 +22,39 @@ namespace OnlineStore.ComponentRegistrar
         public static void AddComponents(IServiceCollection services, IConfiguration configuration)
         {
             RegisterRepositories(services, configuration);
-            RegisterServices(services);
+            RegisterServices(services, configuration);
             RegisterMapper(services);
         }
 
         private static void RegisterRepositories(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<DbContext>(p =>
+            services.AddScoped<DapperDbContext>(p =>
             {
                 var connectionString = configuration.GetConnectionString("DefaultConnection");
-                return new DbContext(connectionString);
+                return new DapperDbContext(connectionString);
             });
+
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContext<OnlineStoreDbContext>(options =>
+                options.UseNpgsql(connectionString)
+            );
 
             services.AddScoped<IAttributesRepository, AttributesRepository>();
         }
 
-        private static void RegisterServices(IServiceCollection services)
+        private static void RegisterServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<IProductAttributeService, ProductAttributeService>();
+            var redisConfiguration = configuration
+                .GetSection("Redis")
+                .Get<RedisConfiguration>();
 
-            services.AddScoped<IRedisCache, RedisCache>();
+            services.AddStackExchangeRedisExtensions<NewtonsoftSerializer>(redisConfiguration);
+
+            services.AddScoped<IProductAttributeService, ProductAttributeService>();
+            services.Decorate<IProductAttributeService, CachedProductAttributeService>();
+
+            services.AddSingleton<IRedisCache, RedisCache>();
+            services.AddSingleton<ICacheService, RedisCacheService>();
         }
 
         private static void RegisterMapper(IServiceCollection services)

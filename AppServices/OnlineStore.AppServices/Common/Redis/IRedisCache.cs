@@ -9,13 +9,23 @@
         /// Получает данные из Redis по ключу.
         /// </summary>
         /// <param name="key">Ключ.</param>
-        Task<string> GetAsync(string key);
+        /// <param name="cancellation">Токен отмены операции.</param>
+        Task<T> GetAsync<T>(string key, CancellationToken cancellation);
 
         /// <summary>
         /// Записывает данные в Redis по указанному ключу.
         /// </summary>
         /// <param name="key">Ключ.</param>
         /// <param name="value">Данные.</param>
-        Task SetStringAsync(string key, string value);
+        /// <param name="lifeTime">Время жизни значения в кэше.</param>
+        /// <param name="cancellation">Токен отмены операции.</param>
+        Task SetAsync<T>(string key, T value, TimeSpan lifeTime, CancellationToken cancellation);
+
+        /// <summary>
+        /// Удаляет значение из кэша.
+        /// </summary>
+        /// <param name="key">Ключ.</param>
+        /// <param name="cancellation">Токен отмены операции.</param>
+        Task RemoveAsync(string key, CancellationToken cancellation);
     }
 }

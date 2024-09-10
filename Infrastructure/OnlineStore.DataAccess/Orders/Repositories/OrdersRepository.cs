@@ -12,7 +12,7 @@ namespace OnlineStore.DataAccess.Orders.Repositories
 {
     public sealed class OrdersRepository : DapperRepositoryBase<Order>, IOrderRepository
     {
-        public OrdersRepository(DbContext context) : base(context)
+        public OrdersRepository(DapperDbContext context) : base(context)
         {
         }
     }
