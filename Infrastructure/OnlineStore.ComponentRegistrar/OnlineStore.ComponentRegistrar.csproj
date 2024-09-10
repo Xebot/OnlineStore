@@ -10,6 +10,9 @@
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
+    <PackageReference Include="Scrutor" Version="4.2.2" />
+    <PackageReference Include="StackExchange.Redis.Extensions.AspNetCore" Version="10.2.0" />
+    <PackageReference Include="StackExchange.Redis.Extensions.Newtonsoft" Version="10.2.0" />
   </ItemGroup>
 
   <ItemGroup>

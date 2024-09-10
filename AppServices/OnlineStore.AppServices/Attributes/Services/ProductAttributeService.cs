@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using OnlineStore.AppServices.Attributes.Repositories;
-using OnlineStore.AppServices.Common.Redis;
+using OnlineStore.AppServices.Common.CacheService;
 using OnlineStore.Contracts.ProductAttributes;
 
 namespace OnlineStore.AppServices.Attributes.Services
@@ -12,39 +12,25 @@ namespace OnlineStore.AppServices.Attributes.Services
     {
         private readonly IAttributesRepository _attributesRepository;
         private readonly IMapper _mapper;
-        private readonly IRedisCache _redisCache;
+        private readonly ICacheService _cacheService;
 
         /// <inheritdoc/>
         public ProductAttributeService(
             IAttributesRepository attributesRepository,
             IMapper mapper,
-            IRedisCache redisCache)
+            ICacheService cacheService)
         {
             _attributesRepository = attributesRepository;
             _mapper = mapper;
-            _redisCache = redisCache;
+            _cacheService = cacheService;
         }
 
         /// <inheritdoc/>
         public async Task<ProductAttributeDto> GetAsync(int id)
         {
-            var cachedValue = await _redisCache.GetAsync($"ProductAttributes_{id}");
-
-            if (cachedValue != null)
-            {
-                return new ProductAttributeDto
-                {
-                    Id = id,
-                    FullAttributeName = cachedValue
-                };
-            }
-
-            var attribute = await _attributesRepository.GetAsync(id)
-                ?? throw new Exception($"Не найден атрибут с id = {id}");
+            var attribute = await _attributesRepository.GetAsync(id);
 
             var dto = _mapper.Map<ProductAttributeDto>(attribute);
-
-            await _redisCache.SetStringAsync($"ProductAttributes_{dto.Id}", $"{dto.FullAttributeName}");
 
             return dto;
         }

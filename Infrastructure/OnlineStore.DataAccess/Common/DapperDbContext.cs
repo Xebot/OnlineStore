@@ -5,11 +5,11 @@ namespace OnlineStore.DataAccess.Common
     /// <summary>
     /// Контекст для работы с БД.
     /// </summary>
-    public class DbContext : IDisposable
+    public class DapperDbContext : IDisposable
     {
         private readonly NpgsqlConnection _connection;
 
-        public DbContext(string connectionString)
+        public DapperDbContext(string connectionString)
         {
             _connection = new NpgsqlConnection(connectionString);
         }

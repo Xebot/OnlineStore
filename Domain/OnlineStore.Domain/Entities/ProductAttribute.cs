@@ -3,7 +3,6 @@
     /// <summary>
     /// Аттрибут товара.
     /// </summary>
-    [Dapper.Contrib.Extensions.Table("Attributes")]
     public class ProductAttribute
     {
         /// <summary>
@@ -14,6 +13,6 @@
         /// <summary>
         /// Наименование.
         /// </summary>
-        public string name { get; set; }
+        public string Name { get; set; } = default!;
     }
 }

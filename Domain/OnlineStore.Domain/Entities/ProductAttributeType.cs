@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace OnlineStore.Domain.Entities
 {
-    /// <summary>
-    /// Товар.
-    /// </summary>
-    public class Product
+    public class ProductAttributeType
     {
         public int Id { get; set; }
+
+        public string Name { get; set; }
     }
 }

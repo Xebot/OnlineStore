@@ -11,10 +11,10 @@ namespace OnlineStore.DataAccess.Common
     /// </summary>
     public abstract class DapperRepositoryBase<T> : IRepository<T> where T : class
     {
-        private readonly DbContext _context;
+        private readonly DapperDbContext _context;
 
         /// <inheritdoc/>
-        protected DapperRepositoryBase(DbContext context)
+        protected DapperRepositoryBase(DapperDbContext context)
         {
             _context = context;
         }

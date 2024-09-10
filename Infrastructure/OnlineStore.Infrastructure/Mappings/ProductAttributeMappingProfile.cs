@@ -9,7 +9,7 @@ namespace OnlineStore.Infrastructure.Mappings
         public ProductAttributeMappingProfile()
         {
             CreateMap<ProductAttribute, ProductAttributeDto>()
-                .ForMember(dest => dest.FullAttributeName, o => o.MapFrom(src => src.name));
+                .ForMember(dest => dest.FullAttributeName, o => o.MapFrom(src => src.Name));
         }
     }
 }

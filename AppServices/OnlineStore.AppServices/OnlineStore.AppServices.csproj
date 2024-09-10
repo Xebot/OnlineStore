@@ -7,14 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Attributes\Model\**" />
     <Compile Remove="Orders\Models\**" />
     <Compile Remove="Orders\Services\**" />
     <Compile Remove="Orders\UseCases\**" />
     <Compile Remove="Users\**" />
+    <EmbeddedResource Remove="Attributes\Model\**" />
     <EmbeddedResource Remove="Orders\Models\**" />
     <EmbeddedResource Remove="Orders\Services\**" />
     <EmbeddedResource Remove="Orders\UseCases\**" />
     <EmbeddedResource Remove="Users\**" />
+    <None Remove="Attributes\Model\**" />
     <None Remove="Orders\Models\**" />
     <None Remove="Orders\Services\**" />
     <None Remove="Orders\UseCases\**" />
@@ -22,12 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Attributes\Model\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="StackExchange.Redis" Version="2.8.12" />
+    <PackageReference Include="StackExchange.Redis.Extensions.Core" Version="10.2.0" />
   </ItemGroup>
 
   <ItemGroup>
