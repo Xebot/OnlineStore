@@ -1,9 +1,5 @@
-﻿using OnlineStore.AppServices.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
+using OnlineStore.AppServices.Common;
 
 namespace OnlineStore.DataAccess.Common
 {
@@ -27,7 +23,13 @@ namespace OnlineStore.DataAccess.Common
         }
 
         /// <inheritdoc/>
-        public async Task<T> GetAsync(int id)
+        public async virtual Task<List<T>> GetAllAsync()
+        {
+            return await DbContext.Set<T>().ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async virtual Task<T> GetAsync(int id)
         {
             return await DbContext.FindAsync<T>(id);
         }

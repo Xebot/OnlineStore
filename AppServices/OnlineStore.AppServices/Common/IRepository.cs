@@ -16,5 +16,11 @@
         /// </summary>
         /// <param name="entity">Сущность.</param>
         Task AddAsync(T entity);
+
+        /// <summary>
+        /// Получает все записи.
+        /// </summary>
+        /// <returns></returns>
+        Task<List<T>> GetAllAsync();
     }
 }
