@@ -6,8 +6,11 @@ using OnlineStore.AppServices.Attributes.Repositories;
 using OnlineStore.AppServices.Attributes.Services;
 using OnlineStore.AppServices.Common.CacheService;
 using OnlineStore.AppServices.Common.Redis;
+using OnlineStore.AppServices.Products.Repositories;
+using OnlineStore.AppServices.Products.Services;
 using OnlineStore.DataAccess.Attributes.Repositories;
 using OnlineStore.DataAccess.Common;
+using OnlineStore.DataAccess.Products.Repositories;
 using OnlineStore.Infrastructure.Mappings;
 using StackExchange.Redis.Extensions.Core.Configuration;
 using StackExchange.Redis.Extensions.Newtonsoft;
@@ -28,18 +31,13 @@ namespace OnlineStore.ComponentRegistrar
 
         private static void RegisterRepositories(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped<DapperDbContext>(p =>
-            {
-                var connectionString = configuration.GetConnectionString("DefaultConnection");
-                return new DapperDbContext(connectionString);
-            });
-
             var connectionString = configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<OnlineStoreDbContext>(options =>
                 options.UseNpgsql(connectionString)
             );
 
             services.AddScoped<IAttributesRepository, AttributesRepository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
         }
 
         private static void RegisterServices(IServiceCollection services, IConfiguration configuration)
@@ -52,6 +50,8 @@ namespace OnlineStore.ComponentRegistrar
 
             services.AddScoped<IProductAttributeService, ProductAttributeService>();
             services.Decorate<IProductAttributeService, CachedProductAttributeService>();
+
+            services.AddScoped<IProductService, ProductService>();
 
             services.AddSingleton<IRedisCache, RedisCache>();
             services.AddSingleton<ICacheService, RedisCacheService>();

@@ -1,11 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OnlineStore.DataAccess.Configurations;
 using OnlineStore.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OnlineStore.DataAccess.Common
 {
@@ -27,6 +21,11 @@ namespace OnlineStore.DataAccess.Common
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(OnlineStoreDbContext).Assembly);
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
         }
 
         DbSet<ProductAttribute> Attributes { get; set; }

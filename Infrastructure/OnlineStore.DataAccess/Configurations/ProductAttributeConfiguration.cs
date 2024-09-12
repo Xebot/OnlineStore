@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using OnlineStore.Contracts.Enums;
 using OnlineStore.Domain.Entities;
 
 namespace OnlineStore.DataAccess.Configurations

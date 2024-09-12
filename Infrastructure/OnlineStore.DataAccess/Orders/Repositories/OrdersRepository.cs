@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace OnlineStore.DataAccess.Orders.Repositories
 {
-    public sealed class OrdersRepository : DapperRepositoryBase<Order>, IOrderRepository
+    public sealed class OrdersRepository : EfRepositoryBase<Order>, IOrderRepository
     {
-        public OrdersRepository(DapperDbContext context) : base(context)
+        public OrdersRepository(OnlineStoreDbContext dbContext) : base(dbContext)
         {
         }
     }

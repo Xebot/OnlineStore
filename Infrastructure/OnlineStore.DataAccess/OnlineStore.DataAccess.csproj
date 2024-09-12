@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.1.35" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8">
       <PrivateAssets>all</PrivateAssets>
@@ -20,6 +19,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\AppServices\OnlineStore.AppServices\OnlineStore.AppServices.csproj" />
+    <ProjectReference Include="..\OnlineStore.Infrastructure\OnlineStore.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Attributes\Configurations\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>
