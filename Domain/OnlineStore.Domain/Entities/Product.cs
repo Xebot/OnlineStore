@@ -41,6 +41,16 @@
         public int StockQuantity { get; set; }
 
         /// <summary>
+        /// Дата создания.
+        /// </summary>
+        public DateTime CreatedAt { get; set; }
+
+        /// <summary>
+        /// Дата модификации.
+        /// </summary>
+        public DateTime? UpdatedAt { get; set; }
+
+        /// <summary>
         /// Категория.
         /// </summary>
         public Category? Category { get; set; }

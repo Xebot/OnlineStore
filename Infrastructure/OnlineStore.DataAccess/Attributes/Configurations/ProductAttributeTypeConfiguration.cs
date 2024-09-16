@@ -4,7 +4,7 @@ using OnlineStore.Contracts.Enums;
 using OnlineStore.Domain.Entities;
 using OnlineStore.Infrastructure.Extensions;
 
-namespace OnlineStore.DataAccess.Configurations
+namespace OnlineStore.DataAccess.Attributes.Configurations
 {
     public sealed class ProductAttributeTypeConfiguration : IEntityTypeConfiguration<ProductAttributeType>
     {
