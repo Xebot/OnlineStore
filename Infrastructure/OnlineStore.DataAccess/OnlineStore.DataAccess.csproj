@@ -23,8 +23,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Attributes\Configurations\" />
+    <Folder Include="Categories\Repositories\" />
+    <Folder Include="Images\Repositories\" />
     <Folder Include="Migrations\" />
+    <Folder Include="Orders\Configurations\" />
   </ItemGroup>
 
 </Project>

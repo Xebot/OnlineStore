@@ -1,21 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OnlineStore.Domain.Entities
+﻿namespace OnlineStore.Domain.Entities
 {
+    /// <summary>
+    /// Изображение товара.
+    /// </summary>
     public sealed class ProductImage
     {
+        /// <summary>
+        /// Идентификатор.
+        /// </summary>
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        /// <summary>
+        /// Наименование.
+        /// </summary>
+        public string Name { get; set; } = default!;
 
-        public string Url { get; set; }
+        /// <summary>
+        /// Ссылка.
+        /// </summary>
+        public string Url { get; set; } = default!;
 
+        /// <summary>
+        /// Идентификатор товара.
+        /// </summary>
         public int ProductId { get; set; }
 
-        public Product Product { get; set; }
+        /// <summary>
+        /// Товар.
+        /// </summary>
+        public Product Product { get; set; } = default!;
     }
 }

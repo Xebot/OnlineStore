@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OnlineStore.Domain.Entities;
 
-namespace OnlineStore.DataAccess.Configurations
+namespace OnlineStore.DataAccess.Categories.Configurations
 {
     public sealed class CategoryConfiguration : IEntityTypeConfiguration<Category>
     {

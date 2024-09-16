@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using OnlineStore.Domain.Entities;
 
-namespace OnlineStore.DataAccess.Configurations
+namespace OnlineStore.DataAccess.Attributes.Configurations
 {
     public sealed class ProductAttributeConfiguration : IEntityTypeConfiguration<ProductAttribute>
     {
