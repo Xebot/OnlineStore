@@ -1,0 +1,13 @@
+﻿@model AsparagusViewModel
+
+<form asp-action="Asparagus" method="post">
+    <div>
+        <label asp-for="Email"></label>
+        <input asp-for="Email" />
+    </div>
+    <div>
+        <label asp-for="Name"></label>
+        <input asp-for="Name" />
+    </div>
+    <button type="submit">Я ем спаржу!</button>
+</form>

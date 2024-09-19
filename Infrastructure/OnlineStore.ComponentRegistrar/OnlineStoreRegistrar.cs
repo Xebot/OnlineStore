@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using OnlineStore.AppServices.Asparagus;
 using OnlineStore.AppServices.Attributes.Repositories;
 using OnlineStore.AppServices.Attributes.Services;
 using OnlineStore.AppServices.Authentication.Services;
@@ -11,6 +12,7 @@ using OnlineStore.AppServices.Common.Models;
 using OnlineStore.AppServices.Common.Redis;
 using OnlineStore.AppServices.Products.Repositories;
 using OnlineStore.AppServices.Products.Services;
+using OnlineStore.DataAccess.Asparagus.Repositories;
 using OnlineStore.DataAccess.Attributes.Repositories;
 using OnlineStore.DataAccess.Common;
 using OnlineStore.DataAccess.Products.Repositories;
@@ -49,6 +51,7 @@ namespace OnlineStore.ComponentRegistrar
 
             services.AddScoped<IAttributesRepository, AttributesRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IAsparagusLoverRepository, AsparagusLoverRepository>();
         }
 
         private static void RegisterServices(IServiceCollection services, IConfiguration configuration)
@@ -66,6 +69,8 @@ namespace OnlineStore.ComponentRegistrar
 
             services.AddSingleton<IRedisCache, RedisCache>();
             services.AddSingleton<ICacheService, RedisCacheService>();
+
+            services.AddScoped<IAsparagusService, AsparagusService>();
 
             services.Configure<DecoratorSettings>(configuration.GetSection("DecoratorSettings"));
             var decorationSettings = configuration.GetSection("DecoratorSettings").Get<DecoratorSettings>();
