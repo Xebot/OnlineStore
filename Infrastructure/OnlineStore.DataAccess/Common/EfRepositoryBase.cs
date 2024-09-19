@@ -8,30 +8,34 @@ namespace OnlineStore.DataAccess.Common
     /// </summary>
     public class EfRepositoryBase<T> : IRepository<T> where T : class
     {
-        public readonly OnlineStoreDbContext DbContext;
+        public readonly MutableOnlineStoreDbContext MutableDbContext;
+        public readonly ReadonlyOnlineStoreDbContext ReadOnlyDbContext;
 
         /// <inheritdoc/>
-        public EfRepositoryBase(OnlineStoreDbContext dbContext)
+        public EfRepositoryBase(
+            MutableOnlineStoreDbContext mutableDbContext, 
+            ReadonlyOnlineStoreDbContext readOnlyDbContext)
         {
-            DbContext = dbContext;
+            MutableDbContext = mutableDbContext;
+            ReadOnlyDbContext = readOnlyDbContext;
         }
 
         /// <inheritdoc/>
         public async Task AddAsync(T entity)
         {
-            await DbContext.AddAsync(entity);
+            await MutableDbContext.AddAsync(entity);
         }
 
         /// <inheritdoc/>
         public async virtual Task<List<T>> GetAllAsync()
         {
-            return await DbContext.Set<T>().ToListAsync();
+            return await ReadOnlyDbContext.Set<T>().ToListAsync();
         }
 
         /// <inheritdoc/>
         public async virtual Task<T> GetAsync(int id)
         {
-            return await DbContext.FindAsync<T>(id);
+            return await MutableDbContext.FindAsync<T>(id);
         }
     }
 }

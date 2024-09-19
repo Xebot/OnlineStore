@@ -26,7 +26,7 @@ namespace OnlineStore.MVC.Controllers
 
         public async Task<IActionResult> Index()
         {
-            //var entity = await _productAttributeService.GetAsync(1);
+            var entity = await _productAttributeService.GetAsync(1);
             var products = await _productService.GetProductsAsync();
             return View();
         }

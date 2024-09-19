@@ -2,6 +2,7 @@
 using OnlineStore.AppServices.Attributes.Repositories;
 using OnlineStore.AppServices.Common.CacheService;
 using OnlineStore.Contracts.ProductAttributes;
+using OnlineStore.Domain.Entities;
 
 namespace OnlineStore.AppServices.Attributes.Services
 {

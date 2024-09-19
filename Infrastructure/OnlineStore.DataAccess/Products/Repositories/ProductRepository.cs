@@ -6,23 +6,29 @@ using OnlineStore.Domain.Entities;
 
 namespace OnlineStore.DataAccess.Products.Repositories
 {
+    /// <summary>
+    /// Репозиторий по работе с товарами.
+    /// </summary>
     public sealed class ProductRepository : EfRepositoryBase<Product>, IProductRepository
     {
-        public ProductRepository(OnlineStoreDbContext dbContext) : base(dbContext)
+        public ProductRepository(MutableOnlineStoreDbContext mutableDbContext, 
+            ReadonlyOnlineStoreDbContext readOnlyDbContext) 
+            : base(mutableDbContext, readOnlyDbContext)
         {
         }
 
         /// <inheritdoc/>
         public async override Task<List<Product>> GetAllAsync()
         {
-            return await DbContext.Set<Product>()
+            return await ReadOnlyDbContext.Set<Product>()
                 .Include(x => x.Category)
                 .ToListAsync();
         }
 
+        /// <inheritdoc/>
         public async Task<List<Product>> GetProductsAsync(GetProductsRequest request)
         {
-            var query = DbContext
+            var query = ReadOnlyDbContext
                 .Set<Product>()
                 .AsQueryable();
 
@@ -38,7 +44,7 @@ namespace OnlineStore.DataAccess.Products.Repositories
             //        .Include(x => x.Images);
             //}
 
-            
+            query = query.Where(x => x.Id > 10);
 
             var products = await query.ToListAsync();
 
