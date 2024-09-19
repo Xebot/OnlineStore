@@ -1,16 +1,17 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using OnlineStore.Domain.Entities;
 
 namespace OnlineStore.DataAccess.Common
 {
-    public class MutableOnlineStoreDbContext : DbContext
+    public class MutableOnlineStoreDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, int>
     {
         public MutableOnlineStoreDbContext() : base()
         {
             
         }
 
-        public MutableOnlineStoreDbContext(DbContextOptions options) 
+        public MutableOnlineStoreDbContext(DbContextOptions<MutableOnlineStoreDbContext> options) 
             : base(options)
         {
             

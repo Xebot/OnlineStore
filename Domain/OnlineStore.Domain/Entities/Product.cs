@@ -51,6 +51,11 @@
         public DateTime? UpdatedAt { get; set; }
 
         /// <summary>
+        /// Признак удаление товара.
+        /// </summary>
+        public bool IsDeleted { get; set; }
+
+        /// <summary>
         /// Категория.
         /// </summary>
         public Category? Category { get; set; }

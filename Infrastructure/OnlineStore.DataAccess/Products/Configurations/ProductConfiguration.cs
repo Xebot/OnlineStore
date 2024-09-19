@@ -23,10 +23,6 @@ namespace OnlineStore.DataAccess.Products.Configurations
                 .HasPrecision(14,4)
                 .IsRequired(true);
 
-            //builder.Property(t => t.Category)
-            //    .HasColumnName("CategoryId")
-            //    .IsRequired(false);
-
             builder.HasOne(t => t.Category)
                 .WithMany()
                 .HasForeignKey(t => t.CategoryId)
