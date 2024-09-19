@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OnlineStore.AppServices.Attributes.Repositories;
 using OnlineStore.AppServices.Attributes.Services;
+using OnlineStore.AppServices.Authentication.Services;
 using OnlineStore.AppServices.Common.CacheService;
 using OnlineStore.AppServices.Common.Models;
 using OnlineStore.AppServices.Common.Redis;
@@ -12,6 +14,7 @@ using OnlineStore.AppServices.Products.Services;
 using OnlineStore.DataAccess.Attributes.Repositories;
 using OnlineStore.DataAccess.Common;
 using OnlineStore.DataAccess.Products.Repositories;
+using OnlineStore.Domain.Entities;
 using OnlineStore.Infrastructure.Mappings;
 using StackExchange.Redis.Extensions.Core.Configuration;
 using StackExchange.Redis.Extensions.Newtonsoft;
@@ -25,6 +28,10 @@ namespace OnlineStore.ComponentRegistrar
     {
         public static void AddComponents(IServiceCollection services, IConfiguration configuration)
         {
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
+                .AddEntityFrameworkStores<MutableOnlineStoreDbContext>()
+                .AddDefaultTokenProviders();
+
             RegisterRepositories(services, configuration);
             RegisterServices(services, configuration);
             RegisterMapper(services);
@@ -52,7 +59,8 @@ namespace OnlineStore.ComponentRegistrar
 
             services.AddStackExchangeRedisExtensions<NewtonsoftSerializer>(redisConfiguration);
 
-            services.AddScoped<IProductAttributeService, ProductAttributeService>();            
+            services.AddScoped<IProductAttributeService, ProductAttributeService>();
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
 
             services.AddScoped<IProductService, ProductService>();
 

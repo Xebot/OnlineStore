@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using OnlineStore.Domain.Entities;
 
 namespace OnlineStore.DataAccess.Common
 {
-    public class ReadonlyOnlineStoreDbContext : DbContext
+    public class ReadonlyOnlineStoreDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, int>
     {
         //public ReadonlyOnlineStoreDbContext() : base()
         //{
