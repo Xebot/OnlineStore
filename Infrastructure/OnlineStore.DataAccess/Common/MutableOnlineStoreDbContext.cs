@@ -3,14 +3,14 @@ using OnlineStore.Domain.Entities;
 
 namespace OnlineStore.DataAccess.Common
 {
-    public class OnlineStoreDbContext : DbContext
+    public class MutableOnlineStoreDbContext : DbContext
     {
-        public OnlineStoreDbContext() : base()
+        public MutableOnlineStoreDbContext() : base()
         {
             
         }
 
-        public OnlineStoreDbContext(DbContextOptions<OnlineStoreDbContext> options) 
+        public MutableOnlineStoreDbContext(DbContextOptions options) 
             : base(options)
         {
             
@@ -20,7 +20,7 @@ namespace OnlineStore.DataAccess.Common
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(OnlineStoreDbContext).Assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(MutableOnlineStoreDbContext).Assembly);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -28,6 +28,6 @@ namespace OnlineStore.DataAccess.Common
             base.OnConfiguring(optionsBuilder);
         }
 
-        DbSet<ProductAttribute> Attributes { get; set; }
+        public DbSet<ProductAttribute> Attributes { get; set; }
     }
 }

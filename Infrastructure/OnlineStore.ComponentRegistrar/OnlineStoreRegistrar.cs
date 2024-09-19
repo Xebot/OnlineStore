@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using OnlineStore.AppServices.Attributes.Repositories;
 using OnlineStore.AppServices.Attributes.Services;
 using OnlineStore.AppServices.Common.CacheService;
+using OnlineStore.AppServices.Common.Models;
 using OnlineStore.AppServices.Common.Redis;
 using OnlineStore.AppServices.Products.Repositories;
 using OnlineStore.AppServices.Products.Services;
@@ -32,9 +33,12 @@ namespace OnlineStore.ComponentRegistrar
         private static void RegisterRepositories(IServiceCollection services, IConfiguration configuration)
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<OnlineStoreDbContext>(options =>
+            services.AddDbContext<MutableOnlineStoreDbContext>(options =>
                 options.UseNpgsql(connectionString)
             );
+            services.AddDbContext<ReadonlyOnlineStoreDbContext>(options =>
+                options.UseNpgsql(connectionString)
+            );            
 
             services.AddScoped<IAttributesRepository, AttributesRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
@@ -48,13 +52,19 @@ namespace OnlineStore.ComponentRegistrar
 
             services.AddStackExchangeRedisExtensions<NewtonsoftSerializer>(redisConfiguration);
 
-            services.AddScoped<IProductAttributeService, ProductAttributeService>();
-            services.Decorate<IProductAttributeService, CachedProductAttributeService>();
+            services.AddScoped<IProductAttributeService, ProductAttributeService>();            
 
             services.AddScoped<IProductService, ProductService>();
 
             services.AddSingleton<IRedisCache, RedisCache>();
             services.AddSingleton<ICacheService, RedisCacheService>();
+
+            services.Configure<DecoratorSettings>(configuration.GetSection("DecoratorSettings"));
+            var decorationSettings = configuration.GetSection("DecoratorSettings").Get<DecoratorSettings>();
+            if (decorationSettings?.EnableDecoration == true)
+            {
+                services.Decorate<IProductAttributeService, CachedProductAttributeService>();
+            }
         }
 
         private static void RegisterMapper(IServiceCollection services)

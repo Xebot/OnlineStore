@@ -24,8 +24,7 @@ namespace OnlineStore.DataAccess.Attributes.Configurations
                 {
                     Id = (int)e,
                     Name = e.GetEnumDescription()
-                })
-        );
+                }));
         }
     }
 }

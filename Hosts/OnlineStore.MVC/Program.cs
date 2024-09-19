@@ -11,7 +11,7 @@ namespace OnlineStore.MVC
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
-            OnlineStoreRegistrar.AddComponents(builder.Services, builder.Configuration);            
+            OnlineStoreRegistrar.AddComponents(builder.Services, builder.Configuration);
 
             var app = builder.Build();
 

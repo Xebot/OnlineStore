@@ -1,18 +1,15 @@
-﻿using Microsoft.Extensions.Configuration;
-using OnlineStore.AppServices.Orders.Repositories;
+﻿using OnlineStore.AppServices.Orders.Repositories;
 using OnlineStore.DataAccess.Common;
 using OnlineStore.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OnlineStore.DataAccess.Orders.Repositories
 {
+    /// <summary>
+    /// Репозиторий по работе с заказами.
+    /// </summary>
     public sealed class OrdersRepository : EfRepositoryBase<Order>, IOrderRepository
     {
-        public OrdersRepository(OnlineStoreDbContext dbContext) : base(dbContext)
+        public OrdersRepository(MutableOnlineStoreDbContext mutableDbContext, ReadonlyOnlineStoreDbContext readOnlyDbContext) : base(mutableDbContext, readOnlyDbContext)
         {
         }
     }

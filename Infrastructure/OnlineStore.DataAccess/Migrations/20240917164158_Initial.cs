@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -46,17 +47,32 @@ namespace OnlineStore.DataAccess.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "productattributetype",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_productattributetype", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "product",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
-                    Price = table.Column<decimal>(type: "numeric", nullable: false),
+                    Price = table.Column<decimal>(type: "numeric(14,4)", precision: 14, scale: 4, nullable: false),
                     CategoryId = table.Column<int>(type: "integer", nullable: true),
                     ImageUrl = table.Column<string>(type: "text", nullable: true),
-                    StockQuantity = table.Column<int>(type: "integer", nullable: false)
+                    StockQuantity = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -66,6 +82,27 @@ namespace OnlineStore.DataAccess.Migrations
                         column: x => x.CategoryId,
                         principalTable: "category",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ProductImage",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
+                    Url = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: false),
+                    ProductId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductImage", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProductImage_product_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "product",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
@@ -84,7 +121,23 @@ namespace OnlineStore.DataAccess.Migrations
                 {
                     { 1, "Гитары", null },
                     { 2, "Клавишные", null },
-                    { 3, "Ударные", null },
+                    { 3, "Ударные", null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "productattributetype",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Используется для поиска" },
+                    { 2, "Не используется для поиска" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "category",
+                columns: new[] { "Id", "Name", "ParentCategoryId" },
+                values: new object[,]
+                {
                     { 4, "Бас гитары", 1 },
                     { 5, "Электрогитары", 1 }
                 });
@@ -98,6 +151,11 @@ namespace OnlineStore.DataAccess.Migrations
                 name: "IX_product_CategoryId",
                 table: "product",
                 column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductImage_ProductId",
+                table: "ProductImage",
+                column: "ProductId");
         }
 
         /// <inheritdoc />
@@ -105,6 +163,12 @@ namespace OnlineStore.DataAccess.Migrations
         {
             migrationBuilder.DropTable(
                 name: "attributes");
+
+            migrationBuilder.DropTable(
+                name: "productattributetype");
+
+            migrationBuilder.DropTable(
+                name: "ProductImage");
 
             migrationBuilder.DropTable(
                 name: "product");

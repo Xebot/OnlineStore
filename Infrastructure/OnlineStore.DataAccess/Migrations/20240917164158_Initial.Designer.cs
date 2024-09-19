@@ -11,8 +11,8 @@ using OnlineStore.DataAccess.Common;
 
 namespace OnlineStore.DataAccess.Migrations
 {
-    [DbContext(typeof(OnlineStoreDbContext))]
-    [Migration("20240912165158_Initial")]
+    [DbContext(typeof(MutableOnlineStoreDbContext))]
+    [Migration("20240917164158_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -87,6 +87,9 @@ namespace OnlineStore.DataAccess.Migrations
                     b.Property<int?>("CategoryId")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
@@ -96,13 +99,18 @@ namespace OnlineStore.DataAccess.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("numeric");
+                        .HasPrecision(14, 4)
+                        .HasColumnType("numeric(14,4)");
 
                     b.Property<int>("StockQuantity")
                         .HasColumnType("integer");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -142,6 +150,63 @@ namespace OnlineStore.DataAccess.Migrations
                         });
                 });
 
+            modelBuilder.Entity("OnlineStore.Domain.Entities.ProductAttributeType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("productattributetype", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Используется для поиска"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Не используется для поиска"
+                        });
+                });
+
+            modelBuilder.Entity("OnlineStore.Domain.Entities.ProductImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductImage", (string)null);
+                });
+
             modelBuilder.Entity("OnlineStore.Domain.Entities.Category", b =>
                 {
                     b.HasOne("OnlineStore.Domain.Entities.Category", "ParentCategory")
@@ -158,6 +223,21 @@ namespace OnlineStore.DataAccess.Migrations
                         .HasForeignKey("CategoryId");
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("OnlineStore.Domain.Entities.ProductImage", b =>
+                {
+                    b.HasOne("OnlineStore.Domain.Entities.Product", "Product")
+                        .WithMany("Images")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("OnlineStore.Domain.Entities.Product", b =>
+                {
+                    b.Navigation("Images");
                 });
 #pragma warning restore 612, 618
         }

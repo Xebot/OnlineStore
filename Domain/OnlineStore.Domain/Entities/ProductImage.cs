@@ -29,5 +29,7 @@
         /// Товар.
         /// </summary>
         public Product Product { get; set; } = default!;
+
+        public int Idd { get; set; }
     }
 }
