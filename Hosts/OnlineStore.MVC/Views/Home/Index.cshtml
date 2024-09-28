@@ -1,10 +1,59 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@using OnlineStore.Contracts.Products
+@model ShortProductList
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    <p>IsAuthentificated - @User.Identity.IsAuthenticated</p>
-    <p>IsAdmin - @User.IsInRole("Admin")</p>
+<div class="container mt-4">
+    <div class="row">
+        @foreach (var product in Model.Products)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img class="card-img-top" src="@product.ImageUrl" alt="@product.Name" />
+                    <div class="card-body">
+                        <h5 class="card-title">@product.Name</h5>
+                        <p class="card-text">@product.Description</p>
+                        <p class="card-text text-success">Цена: @product.Price.ToString("C")</p>
+                        <a href="@Url.Action("Details", "Product", new { id = product.Id })" class="btn btn-primary">Подробнее</a>
+                        <button class="btn btn-success add-to-cart-btn" data-product-id="@product.Id">Добавить в корзину</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Пагинация -->
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            @if (Model.PageNumber > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", new { pageNumber = Model.PageNumber - 1 })">Назад</a>
+                </li>
+            }
+
+            <li class="page-item active">
+                <span class="page-link">@Model.PageNumber</span>
+            </li>
+
+            @if (Model.PageNumber < Math.Ceiling((decimal)Model.TotalCount / 9))
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", new { pageNumber = Model.PageNumber + 1 })">Вперед</a>
+                </li>
+            }
+        </ul>
+    </nav>
 </div>
+
+<script>
+    $(document).ready(function () {
+        $('.add-to-cart-btn').click(function () {
+            var productId = $(this).data('product-id');
+            $.post('@Url.Action("AddToCart", "Cart")', { id: productId }, function (response) {
+                alert("Товар добавлен в корзину");
+
+                // Обновление счетчика корзины
+                $('#cart-count').text(response.cartCount);
+            });
+        });
+    });
+</script>

@@ -1,4 +1,7 @@
-﻿namespace OnlineStore.AppServices.Authentication.Services
+﻿
+using Microsoft.AspNetCore.Identity;
+
+namespace OnlineStore.AppServices.Authentication.Services
 {
     /// <summary>
     /// Интерфейс сервиса аутентификации.
@@ -25,6 +28,6 @@
         /// <param name="email">Email пользователя.</param>
         /// <param name="password">Пароль.</param>
         /// <param name="cancellation">Токен отмены операции.</param>
-        Task<bool> RegisterAsync(string email, string password, CancellationToken cancellation);
+        Task<IdentityResult> RegisterAsync(string email, string password, CancellationToken cancellation);
     }
 }

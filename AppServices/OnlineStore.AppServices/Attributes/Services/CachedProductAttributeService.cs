@@ -22,15 +22,13 @@ namespace OnlineStore.AppServices.Attributes.Services
         }
 
         /// <inheritdoc/>
-        public async Task<ProductAttributeDto> GetAsync(int id)
+        public Task<ProductAttributeDto> GetAsync(int id)
         {
-            var attribute = await _cacheService.GetOrSetAsync(
+            return _cacheService.GetOrSetAsync(
                 key: $"ProductAttributes_{id}",
                 lifeTime: TimeSpan.FromMinutes(10),
                 func: async () => (await _productAtributeService.GetAsync(id)),
                 cancellation: CancellationToken.None);
-
-            return attribute;
         }
     }
 }

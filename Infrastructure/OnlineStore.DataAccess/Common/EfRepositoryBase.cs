@@ -21,21 +21,21 @@ namespace OnlineStore.DataAccess.Common
         }
 
         /// <inheritdoc/>
-        public async Task AddAsync(T entity)
+        public Task AddAsync(T entity)
         {
-            await MutableDbContext.AddAsync(entity);
+            return MutableDbContext.AddAsync(entity).AsTask();
         }
 
         /// <inheritdoc/>
-        public async virtual Task<List<T>> GetAllAsync()
+        public virtual Task<List<T>> GetAllAsync()
         {
-            return await ReadOnlyDbContext.Set<T>().ToListAsync();
+            return ReadOnlyDbContext.Set<T>().ToListAsync();
         }
 
         /// <inheritdoc/>
-        public async virtual Task<T> GetAsync(int id)
+        public virtual Task<T> GetAsync(int id)
         {
-            return await MutableDbContext.FindAsync<T>(id);
+            return MutableDbContext.FindAsync<T>(id).AsTask();
         }
     }
 }
