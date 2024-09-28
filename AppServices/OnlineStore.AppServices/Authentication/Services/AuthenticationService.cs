@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using OnlineStore.Domain.Entities;
 
 namespace OnlineStore.AppServices.Authentication.Services
@@ -10,17 +11,21 @@ namespace OnlineStore.AppServices.Authentication.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         /// <inheritdoc/>
-        public AuthenticationService(SignInManager<ApplicationUser> signInManager,
-            UserManager<ApplicationUser> userManager)
+        public AuthenticationService(
+            SignInManager<ApplicationUser> signInManager,
+            UserManager<ApplicationUser> userManager,
+            IHttpContextAccessor httpContextAccessor)
         {
             _signInManager = signInManager;
             _userManager = userManager;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         /// <inheritdoc/>
-        public async Task<bool> RegisterAsync(string email, string password, CancellationToken cancellation)
+        public Task<IdentityResult> RegisterAsync(string email, string password, CancellationToken cancellation)
         {
             var user = new ApplicationUser
             {
@@ -28,9 +33,7 @@ namespace OnlineStore.AppServices.Authentication.Services
                 Email = email,
             };
 
-            var registeredUser = await _userManager.CreateAsync(user, password);
-
-            return registeredUser != null;
+            return _userManager.CreateAsync(user, password);
         }
 
         /// <inheritdoc/>
