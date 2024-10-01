@@ -1,4 +1,8 @@
+using Hangfire;
+using Microsoft.AspNetCore.Mvc.Filters;
+using OnlineStore.AppServices.Products.Services;
 using OnlineStore.ComponentRegistrar;
+using OnlineStore.MVC.Filters;
 
 namespace OnlineStore.MVC
 {
@@ -29,6 +33,21 @@ namespace OnlineStore.MVC
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                Authorization = new[] { new HangfireAuthorizationFilter() }
+            });
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var recurringJobManager = scope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
+                recurringJobManager.AddOrUpdate(
+                    "process-orders-job",
+                    () => scope.ServiceProvider.GetRequiredService<IProductService>().GetProductsAsync(),
+                    Cron.Minutely());
+            }
+
 
             app.MapControllerRoute(
                 name: "default",
