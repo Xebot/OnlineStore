@@ -2,9 +2,9 @@
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -13,12 +13,18 @@ using OnlineStore.AppServices.Attributes.Repositories;
 using OnlineStore.AppServices.Attributes.Services;
 using OnlineStore.AppServices.Authentication.Services;
 using OnlineStore.AppServices.Common.CacheService;
+using OnlineStore.AppServices.Common.DateTimeProviders;
+using OnlineStore.AppServices.Common.Events.Common;
+using OnlineStore.AppServices.Common.Events.Handlers;
 using OnlineStore.AppServices.Common.Models;
+using OnlineStore.AppServices.Common.NotificationServices;
 using OnlineStore.AppServices.Common.Redis;
 using OnlineStore.AppServices.Products.Repositories;
 using OnlineStore.AppServices.Products.Services;
 using OnlineStore.DataAccess.Attributes.Repositories;
 using OnlineStore.DataAccess.Common;
+using OnlineStore.DataAccess.Events;
+using OnlineStore.DataAccess.MIddlewares;
 using OnlineStore.DataAccess.Products.Repositories;
 using OnlineStore.Domain.Entities;
 using OnlineStore.Infrastructure.JwtGenerator;
@@ -62,6 +68,11 @@ namespace OnlineStore.ComponentRegistrar
             RegisterScheduler(services, configuration);
         }
 
+        public static void RegisterMiddlewares(WebApplication app)
+        {
+            app.UseMiddleware<TransactionMiddleware>();
+        }
+
         private static void RegisterRepositories(IServiceCollection services, IConfiguration configuration)
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection");
@@ -92,6 +103,15 @@ namespace OnlineStore.ComponentRegistrar
             services.AddSingleton<IRedisCache, RedisCache>();
             services.AddSingleton<ICacheService, RedisCacheService>();
             services.AddSingleton<IJwtGenerator, JwtGenerator>();
+            services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+
+            services.AddScoped<IEventDispatcher, EventDispatcher>();
+            services.AddScoped<IEventAccumulator, EventAccumulator>();
+
+            #region Notifications
+            services.AddScoped<INotificationService, EmailNotificationService>();
+
+            #endregion
 
             services.Configure<DecoratorSettings>(configuration.GetSection("DecoratorSettings"));
             var decorationSettings = configuration.GetSection("DecoratorSettings").Get<DecoratorSettings>();
@@ -99,6 +119,13 @@ namespace OnlineStore.ComponentRegistrar
             {
                 services.Decorate<IProductAttributeService, CachedProductAttributeService>();
             }
+
+            services.Scan(scan => 
+                scan.FromAssemblyOf<AddProductEventHandler>()
+                .AddClasses(classes => classes.AssignableTo(typeof(IDomainEventHandler<>)))
+                .AsImplementedInterfaces()
+                .WithScopedLifetime()
+            );
         }
 
         private static void RegisterMapper(IServiceCollection services)
