@@ -23,7 +23,7 @@ namespace OnlineStore.DataAccess.Common
         /// <inheritdoc/>
         public async Task AddAsync(T entity)
         {
-            MutableDbContext.AddAsync(entity).AsTask();
+            await MutableDbContext.AddAsync(entity);
             await MutableDbContext.SaveChangesAsync();
         }
 

@@ -32,6 +32,8 @@ namespace OnlineStore.MVC
 
             app.UseRouting();
 
+            OnlineStoreRegistrar.RegisterMiddlewares(app);
+
             app.UseAuthorization();
 
             app.UseHangfireDashboard("/hangfire", new DashboardOptions

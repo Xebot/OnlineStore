@@ -29,6 +29,9 @@ namespace OnlineStore.DataAccess.Common
             base.OnConfiguring(optionsBuilder);
         }
 
-        public DbSet<ProductAttribute> Attributes { get; set; }
+        public bool HasPendingChanges()
+        {
+            return ChangeTracker.HasChanges();
+        }
     }
 }

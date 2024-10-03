@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OnlineStore.ApiClient;
+using OnlineStore.AppServices.Products.Services;
 using OnlineStore.Contracts.Products;
 using OnlineStore.MVC.Models;
 using System.Diagnostics;
@@ -11,17 +12,28 @@ namespace OnlineStore.MVC.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IOnlineStoreApiClient _apiClient;
+        private readonly IProductService _productService;
 
         public HomeController(
             ILogger<HomeController> logger,
-            IOnlineStoreApiClient apiClient)
+            IOnlineStoreApiClient apiClient,
+            IProductService productService)
         {
             _logger = logger;
             _apiClient = apiClient;
+            _productService = productService;
         }
 
         public async Task<IActionResult> Index(int pageNumber = 1, CancellationToken cancellation = default)
         {
+            await _productService.AddProductAsync(new ShortProductDto
+            {
+                Id = 1,
+                Name = "Товар1",
+                Description = "Описание товара 1",
+                Price = 100,
+                ImageUrl = "https://cdn.shopify.com/s/files/1/0343/4368/2183/products/fender-electric-guitars-solid-body-fender-player-telecaster-daphne-blue-w-3-ply-mint-pickguard-0140217504-17220745461895_2000x.jpg"
+            }, cancellation);
             //await _apiClient.AddProductAsync(new ShortProductDto
             //{
             //    Id = 1,
