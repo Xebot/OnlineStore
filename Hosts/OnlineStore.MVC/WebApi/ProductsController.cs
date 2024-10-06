@@ -7,7 +7,7 @@ namespace OnlineStore.MVC.WebApi
 {
     [Route("api/[controller]")]
     [ApiController]
-    [JwtAuthorize]
+    //[JwtAuthorize]
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;
@@ -26,5 +26,14 @@ namespace OnlineStore.MVC.WebApi
 
             return NoContent();
         }
+
+        [Route("")]
+        [HttpGet]
+        public async Task<IActionResult> GetProducts(CancellationToken cancellation)
+        {
+            var products = await _productService.GetProductsAsync(cancellation);
+            return Ok(products);
+        }
+
     }
 }

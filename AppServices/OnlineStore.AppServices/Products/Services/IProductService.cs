@@ -10,7 +10,7 @@ namespace OnlineStore.AppServices.Products.Services
 {
     public interface IProductService
     {
-        Task<List<Product>> GetProductsAsync();
+        Task<ShortProductList> GetProductsAsync(CancellationToken cancellationToken);
 
         Task AddProductAsync(ShortProductDto productDto, CancellationToken cancellationToken);
     }

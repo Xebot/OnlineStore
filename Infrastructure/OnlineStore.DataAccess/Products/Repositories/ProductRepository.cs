@@ -26,7 +26,7 @@ namespace OnlineStore.DataAccess.Products.Repositories
         }
 
         /// <inheritdoc/>
-        public async Task<List<Product>> GetProductsAsync(GetProductsRequest request)
+        public Task<List<Product>> GetProductsAsync(GetProductsRequest request)
         {
             var query = ReadOnlyDbContext
                 .Set<Product>()
@@ -38,23 +38,7 @@ namespace OnlineStore.DataAccess.Products.Repositories
                     .Include(x => x.Category);
             }
 
-            //if (request.IncludeImages)
-            //{
-            //    query = query
-            //        .Include(x => x.Images);
-            //}
-
-            query = query.Where(x => x.Id > 10);
-
-            var products = await query.ToListAsync();
-
-            foreach (var product in products)
-            {
-                product.Price = 10;
-            }
-
-
-            return products;
+            return query.ToListAsync();
         }
 
         //public async override Task<Product> GetAsync(int id)

@@ -32,5 +32,20 @@ namespace OnlineStore.AppServices.Products.Services
                 IncludeCategory = true,
             });
         }
+
+        public async Task<ShortProductList> GetProductsAsync(CancellationToken cancellationToken)
+        {
+            var products = await _repository.GetProductsAsync(new Models.GetProductsRequest
+            {
+                IncludeCategory = true,
+            });
+
+            return new ShortProductList
+            {
+                TotalCount = products.Count,
+                PageNumber = 1,
+                Products = _mapper.Map<ShortProductDto[]>(products)
+            };
+        }
     }
 }

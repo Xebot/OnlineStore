@@ -39,14 +39,14 @@ namespace OnlineStore.MVC
                 Authorization = new[] { new HangfireAuthorizationFilter() }
             });
 
-            using (var scope = app.Services.CreateScope())
-            {
-                var recurringJobManager = scope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
-                recurringJobManager.AddOrUpdate(
-                    "process-orders-job",
-                    () => scope.ServiceProvider.GetRequiredService<IProductService>().GetProductsAsync(),
-                    Cron.Minutely());
-            }
+            //using (var scope = app.Services.CreateScope())
+            //{
+            //    var recurringJobManager = scope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
+            //    recurringJobManager.AddOrUpdate(
+            //        "process-orders-job",
+            //        () => scope.ServiceProvider.GetRequiredService<IProductService>().GetProductsAsync(CancellationToken.None),
+            //        Cron.Minutely());
+            //}
 
 
             app.MapControllerRoute(
