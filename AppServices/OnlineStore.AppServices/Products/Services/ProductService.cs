@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using OnlineStore.AppServices.Common.DateTimeProviders;
 using OnlineStore.AppServices.Common.Events.Common;
 using OnlineStore.AppServices.Common.NotificationServices;
+using OnlineStore.AppServices.Products.Models;
 using OnlineStore.AppServices.Products.Repositories;
 using OnlineStore.Contracts.Products;
 using OnlineStore.Domain.Entities;
@@ -44,12 +45,23 @@ namespace OnlineStore.AppServices.Products.Services
             return _repository.AddAsync(domainProduct);
         }
 
-        public Task<List<Product>> GetProductsAsync()
+        public Task<List<Product>> GetProductsAsync(GetProductsRequest request)
         {
-            return _repository.GetProductsAsync(new Models.GetProductsRequest
+            if (request == null)
             {
-                IncludeCategory = true,
-            });
+                throw new ArgumentNullException(nameof(request));
+            }
+
+
+
+            return _repository.GetProductsAsync(request);
+        }
+
+        public bool IsBussinessDay()
+        {
+            var today = _dateTimeProvider.UtcNow;
+
+            return today.DayOfWeek != DayOfWeek.Saturday && today.DayOfWeek != DayOfWeek.Sunday;
         }
     }
 }

@@ -26,5 +26,14 @@ namespace OnlineStore.MVC.WebApi
 
             return NoContent();
         }
+
+        [Route("")]
+        [HttpGet]
+        public async Task<IActionResult> GetProductsAsync(CancellationToken cancellation)
+        {
+            var result = await _productService.GetProductsAsync(new AppServices.Products.Models.GetProductsRequest { IncludeCategory = true});
+
+            return Ok(result);
+        }
     }
 }
