@@ -7,17 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Attributes\Model\**" />
+    <Compile Remove="ProductAttributes\Model\**" />
     <Compile Remove="Orders\Models\**" />
     <Compile Remove="Orders\Services\**" />
     <Compile Remove="Orders\UseCases\**" />
     <Compile Remove="Users\**" />
-    <EmbeddedResource Remove="Attributes\Model\**" />
+    <EmbeddedResource Remove="ProductAttributes\Model\**" />
     <EmbeddedResource Remove="Orders\Models\**" />
     <EmbeddedResource Remove="Orders\Services\**" />
     <EmbeddedResource Remove="Orders\UseCases\**" />
     <EmbeddedResource Remove="Users\**" />
-    <None Remove="Attributes\Model\**" />
+    <None Remove="ProductAttributes\Model\**" />
     <None Remove="Orders\Models\**" />
     <None Remove="Orders\Services\**" />
     <None Remove="Orders\UseCases\**" />

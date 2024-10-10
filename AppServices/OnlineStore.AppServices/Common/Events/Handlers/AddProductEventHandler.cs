@@ -1,5 +1,6 @@
 ﻿using OnlineStore.AppServices.Common.Events.Common;
 using OnlineStore.AppServices.Common.NotificationServices;
+using OnlineStore.Contracts.Enums;
 using OnlineStore.Domain.Events;
 
 namespace OnlineStore.AppServices.Common.Events.Handlers
@@ -24,7 +25,8 @@ namespace OnlineStore.AppServices.Common.Events.Handlers
             {
                 Theme = $"Добавлен новый товар - {@event.ProductName}",
                 Email = "email@email.com",
-                Text = $"Добавлен новый товар - {@event.ProductName}"
+                Text = $"Добавлен новый товар - {@event.ProductName}",
+                NotificationChannels = [NotificationChannelEnum.Email, NotificationChannelEnum.Telegram]
             }, CancellationToken.None);
         }
 

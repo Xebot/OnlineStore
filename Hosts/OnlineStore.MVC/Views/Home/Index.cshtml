@@ -1,9 +1,9 @@
 ﻿@using OnlineStore.Contracts.Products
-@model ShortProductList
+@model ProductsListDto
 
 <div class="container mt-4">
     <div class="row">
-        @foreach (var product in Model.Products)
+        @foreach (var product in Model.Result)
         {
             <div class="col-md-4 mb-4">
                 <div class="card">
@@ -34,7 +34,7 @@
                 <span class="page-link">@Model.PageNumber</span>
             </li>
 
-            @if (Model.PageNumber < Math.Ceiling((decimal)Model.TotalCount / 9))
+            @if (Model.PageNumber < Math.Ceiling((decimal)Model.TotalCount / Model.PageSize))
             {
                 <li class="page-item">
                     <a class="page-link" href="@Url.Action("Index", new { pageNumber = Model.PageNumber + 1 })">Вперед</a>

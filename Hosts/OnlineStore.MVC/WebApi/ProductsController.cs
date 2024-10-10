@@ -7,7 +7,7 @@ namespace OnlineStore.MVC.WebApi
 {
     [Route("api/[controller]")]
     [ApiController]
-    [JwtAuthorize]
+    //[JwtAuthorize]
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;
@@ -22,7 +22,7 @@ namespace OnlineStore.MVC.WebApi
         [HttpPost]
         public async Task<IActionResult> AddProductAsync([FromBody] ShortProductDto productDto, CancellationToken cancellation)
         {
-            await _productService.AddProductAsync(productDto, cancellation);
+            await _productService.AddProductAsync(productDto, null, cancellation);
 
             return NoContent();
         }
@@ -31,7 +31,11 @@ namespace OnlineStore.MVC.WebApi
         [HttpGet]
         public async Task<IActionResult> GetProductsAsync(CancellationToken cancellation)
         {
-            var result = await _productService.GetProductsAsync(new AppServices.Products.Models.GetProductsRequest { IncludeCategory = true});
+            var result = await _productService.GetProductsAsync(new Contracts.Common.PagedRequest
+            {
+                PageNumber = 1,
+                PageSize = 10
+            }, cancellation);
 
             return Ok(result);
         }

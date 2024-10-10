@@ -1,20 +1,15 @@
-﻿using OnlineStore.AppServices.Products.Models;
+﻿using Microsoft.AspNetCore.Http;
+using OnlineStore.AppServices.Products.Models;
+using OnlineStore.Contracts.Common;
 using OnlineStore.Contracts.Products;
 using OnlineStore.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OnlineStore.AppServices.Products.Services
 {
     public interface IProductService
     {
-        Task<List<Product>> GetProductsAsync(GetProductsRequest request);
+        Task<ProductsListDto> GetProductsAsync(PagedRequest request, CancellationToken cancellationToken);
 
-        Task AddProductAsync(ShortProductDto productDto, CancellationToken cancellationToken);
-
-        bool IsBussinessDay();
+        Task AddProductAsync(ShortProductDto productDto, IFormFile imageFile, CancellationToken cancellationToken);
     }
 }

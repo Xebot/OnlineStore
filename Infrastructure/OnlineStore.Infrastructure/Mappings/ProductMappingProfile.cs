@@ -9,6 +9,7 @@ namespace OnlineStore.Infrastructure.Mappings
         public ProductMappingProfile()
         {
             CreateMap<ShortProductDto, Product>();
+            CreateMap<Product, ShortProductDto>();
         }
     }
 }

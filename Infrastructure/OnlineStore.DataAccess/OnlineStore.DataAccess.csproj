@@ -24,8 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Categories\Repositories\" />
-    <Folder Include="Images\Repositories\" />
     <Folder Include="Notifications\Repositories\" />
     <Folder Include="Orders\Configurations\" />
   </ItemGroup>

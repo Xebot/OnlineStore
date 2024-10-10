@@ -18,12 +18,22 @@
         /// <summary>
         /// Ссылка.
         /// </summary>
-        public string Url { get; set; } = default!;
+        public string? Url { get; set; } = default!;
+
+        /// <summary>
+        /// Контент изображения.
+        /// </summary>
+        public byte[] Content { get; set; } = default!;
+
+        /// <summary>
+        /// Тип контента.
+        /// </summary>
+        public string? ContentType { get; set; } = default!;
 
         /// <summary>
         /// Идентификатор товара.
         /// </summary>
-        public int ProductId { get; set; }
+        public int? ProductId { get; set; }
 
         /// <summary>
         /// Товар.

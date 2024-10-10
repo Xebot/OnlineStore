@@ -26,11 +26,12 @@ namespace OnlineStore.DataAccess.Products.Repositories
         }
 
         /// <inheritdoc/>
-        public Task<List<Product>> GetProductsAsync(GetProductsRequest request)
+        public Task<List<Product>> GetProductsAsync(GetProductsRequest request, CancellationToken cancellation)
         {
             var query = ReadOnlyDbContext
                 .Set<Product>()
-                .AsQueryable();
+                .AsQueryable()
+                .Where(p => !p.IsDeleted);
 
             if (request.IncludeCategory)
             {
@@ -38,13 +39,25 @@ namespace OnlineStore.DataAccess.Products.Repositories
                     .Include(x => x.Category);
             }
 
-            //if (request.IncludeImages)
-            //{
-            //    query = query
-            //        .Include(x => x.Images);
-            //}
+            if (request.IncludeImages)
+            {
+                query = query
+                    .Include(x => x.Images);
+            }
 
-            return query.ToListAsync();
+            query = query
+                .Skip(request.Skip)
+                .Take(request.Take);
+
+            return query.ToListAsync(cancellation);
+        }
+
+        public Task<int> GetProductsTotalCountAsync(CancellationToken cancellation)
+        {
+            return ReadOnlyDbContext
+                .Set<Product>()
+                .Where(p => !p.IsDeleted)
+                .CountAsync(cancellation);
         }
 
         //public async override Task<Product> GetAsync(int id)

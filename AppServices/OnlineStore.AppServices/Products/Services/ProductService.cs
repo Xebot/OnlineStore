@@ -1,13 +1,16 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using OnlineStore.AppServices.Common.DateTimeProviders;
 using OnlineStore.AppServices.Common.Events.Common;
 using OnlineStore.AppServices.Common.NotificationServices;
+using OnlineStore.AppServices.Images.Services;
 using OnlineStore.AppServices.Products.Models;
 using OnlineStore.AppServices.Products.Repositories;
+using OnlineStore.Contracts.Common;
+using OnlineStore.Contracts.Enums;
 using OnlineStore.Contracts.Products;
 using OnlineStore.Domain.Entities;
-using OnlineStore.Domain.Events;
 
 namespace OnlineStore.AppServices.Products.Services
 {
@@ -17,51 +20,78 @@ namespace OnlineStore.AppServices.Products.Services
         private readonly IMapper _mapper;
         private readonly IEventAccumulator _eventContainer;
         private readonly IDateTimeProvider _dateTimeProvider;
+        private readonly IImageService _imageService;
+        private readonly INotificationService _notificationService;
 
         public ProductService(
             IProductRepository repository,
             IMapper mapper,
             IEventAccumulator eventContainer,
-            IDateTimeProvider dateTimeProvider)
+            IDateTimeProvider dateTimeProvider,
+            IImageService imageService,
+            INotificationService notificationService)
         {
             _repository = repository;
             _mapper = mapper;
             _eventContainer = eventContainer;
             _dateTimeProvider = dateTimeProvider;
+            _imageService = imageService;
+            _notificationService = notificationService;
         }
 
-        public Task AddProductAsync(ShortProductDto productDto, CancellationToken cancellationToken)
+        public async Task AddProductAsync(ShortProductDto productDto, IFormFile imageFile, CancellationToken cancellationToken)
         {
+            var imageId = await _imageService.SaveImageAsync(imageFile, cancellationToken);
+
             var domainProduct = _mapper.Map<Product>(productDto);
+            domainProduct.ImageUrl = $"https://localhost:7194/images/{imageId}";
 
-            _eventContainer.AddEvent(new AddProductEvent
-            {
-                EventDate = _dateTimeProvider.UtcNow,
-                ProductName = "ProductName"
-            });
-
-            return Task.CompletedTask;
-
-            return _repository.AddAsync(domainProduct);
+            await _repository.AddAsync(domainProduct);
         }
 
-        public Task<List<Product>> GetProductsAsync(GetProductsRequest request)
+        public async Task<ProductsListDto> GetProductsAsync(PagedRequest request, CancellationToken cancellation)
         {
+            await _notificationService.SendNotificationAsync(new Contracts.Notifications.NotificationDto
+            {
+                Theme = $"Добавлен новый товар - ",
+                Email = "email@email.com",
+                Text = $"Добавлен новый товар - ",
+                NotificationChannels = [NotificationChannelEnum.Email, NotificationChannelEnum.Telegram]
+            }, cancellation);
             if (request == null)
             {
                 throw new ArgumentNullException(nameof(request));
             }
 
+            var totalCount = await _repository.GetProductsTotalCountAsync(cancellation);
 
+            if (totalCount == 0)
+            {
+                return new ProductsListDto
+                {
+                    PageNumber = 1,
+                    TotalCount = totalCount,
+                    PageSize = 1,
+                    Result = []
+                };
+            }
 
-            return _repository.GetProductsAsync(request);
-        }
+            var products = await _repository.GetProductsAsync(new GetProductsRequest
+            {
+                Take = request.PageSize,
+                Skip = (request.PageNumber - 1) * request.PageSize,
+                IncludeCategory = true
+            }, cancellation);
 
-        public bool IsBussinessDay()
-        {
-            var today = _dateTimeProvider.UtcNow;
+            var productList = _mapper.Map<List<ShortProductDto>>(products);
 
-            return today.DayOfWeek != DayOfWeek.Saturday && today.DayOfWeek != DayOfWeek.Sunday;
+            return new ProductsListDto
+            {
+                PageNumber = request.PageNumber,
+                PageSize= request.PageSize,
+                TotalCount = totalCount,
+                Result = productList
+            };
         }
     }
 }

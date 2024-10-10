@@ -12,6 +12,8 @@ using OnlineStore.ApiClient;
 using OnlineStore.AppServices.Attributes.Repositories;
 using OnlineStore.AppServices.Attributes.Services;
 using OnlineStore.AppServices.Authentication.Services;
+using OnlineStore.AppServices.Categories.Repositories;
+using OnlineStore.AppServices.Categories.Services;
 using OnlineStore.AppServices.Common.CacheService;
 using OnlineStore.AppServices.Common.DateTimeProviders;
 using OnlineStore.AppServices.Common.Events.Common;
@@ -19,11 +21,15 @@ using OnlineStore.AppServices.Common.Events.Handlers;
 using OnlineStore.AppServices.Common.Models;
 using OnlineStore.AppServices.Common.NotificationServices;
 using OnlineStore.AppServices.Common.Redis;
+using OnlineStore.AppServices.Images.Repositories;
+using OnlineStore.AppServices.Images.Services;
 using OnlineStore.AppServices.Products.Repositories;
 using OnlineStore.AppServices.Products.Services;
 using OnlineStore.DataAccess.Attributes.Repositories;
+using OnlineStore.DataAccess.Categories.Repositories;
 using OnlineStore.DataAccess.Common;
 using OnlineStore.DataAccess.Events;
+using OnlineStore.DataAccess.Images.Repositories;
 using OnlineStore.DataAccess.MIddlewares;
 using OnlineStore.DataAccess.Products.Repositories;
 using OnlineStore.Domain.Entities;
@@ -85,6 +91,8 @@ namespace OnlineStore.ComponentRegistrar
 
             services.AddScoped<IAttributesRepository, AttributesRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IImageRepository, ImageRepository>();
         }
 
         private static void RegisterServices(IServiceCollection services, IConfiguration configuration)
@@ -99,6 +107,8 @@ namespace OnlineStore.ComponentRegistrar
             services.AddScoped<IAuthenticationService, AuthenticationService>();
 
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IImageService, ImageService>();
 
             services.AddSingleton<IRedisCache, RedisCache>();
             services.AddSingleton<ICacheService, RedisCacheService>();
@@ -109,8 +119,10 @@ namespace OnlineStore.ComponentRegistrar
             services.AddScoped<IEventAccumulator, EventAccumulator>();
 
             #region Notifications
-            services.AddScoped<INotificationService, EmailNotificationService>();
+            services.AddScoped<INotificationStrategy, EmailNotificationStrategy>();
+            services.AddScoped<INotificationStrategy, TelegramNotificationStrategy>();
 
+            services.AddScoped<INotificationService, NotificationService>();
             #endregion
 
             services.Configure<DecoratorSettings>(configuration.GetSection("DecoratorSettings"));
@@ -134,6 +146,7 @@ namespace OnlineStore.ComponentRegistrar
             {
                 mc.AddProfile(new ProductAttributeMappingProfile());
                 mc.AddProfile(new ProductMappingProfile());
+                mc.AddProfile(new CategoryMappingProfile());
             });
 
             IMapper mapper = mapperConfig.CreateMapper();

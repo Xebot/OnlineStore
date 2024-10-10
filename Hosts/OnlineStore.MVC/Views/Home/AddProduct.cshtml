@@ -1,0 +1,45 @@
+﻿@using OnlineStore.Contracts.Products;
+
+@model ShortProductDto
+
+@{
+    ViewData["Title"] = "Add Product";
+}
+
+<h2>Add Product</h2>
+
+<form asp-action="AddProduct" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="Name">Product Name</label>
+        <input type="text" class="form-control" id="Name" name="Name" asp-for="Name" required />
+    </div>
+
+    <div class="form-group">
+        <label for="Description">Description</label>
+        <textarea class="form-control" id="Description" name="Description" asp-for="Description" required></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="Price">Price</label>
+        <input type="number" class="form-control" id="Price" name="Price" asp-for="Price" step="0.01" required />
+    </div>
+
+    <div class="form-group">
+        <label for="StockQuantity">Stock Quantity</label>
+        <input type="number" class="form-control" id="StockQuantity" name="StockQuantity" asp-for="StockQuantity" required />
+    </div>
+
+    <div class="form-group">
+        <label for="CategoryId">Category</label>
+        <select class="form-control" asp-for="CategoryId" asp-items="ViewBag.Categories">
+            <option value="">Select a Category</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="ImageFile">Main Image</label>
+        <input type="file" class="form-control" id="ImageFile" name="ImageFile" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add Product</button>
+</form>

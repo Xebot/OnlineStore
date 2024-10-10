@@ -18,12 +18,12 @@ namespace OnlineStore.DataAccess.Images.Configurations
 
             builder.Property(t => t.Url)
                 .HasMaxLength(2048)
-                .IsRequired(true);
+                .IsRequired(false);
 
             builder.HasOne(t => t.Product)
                 .WithMany(t => t.Images)
                 .HasForeignKey(t => t.ProductId)
-                .IsRequired();
+                .IsRequired(false);
         }
     }
 }
