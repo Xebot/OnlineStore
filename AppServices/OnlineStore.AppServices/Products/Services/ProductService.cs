@@ -51,13 +51,6 @@ namespace OnlineStore.AppServices.Products.Services
 
         public async Task<ProductsListDto> GetProductsAsync(PagedRequest request, CancellationToken cancellation)
         {
-            await _notificationService.SendNotificationAsync(new Contracts.Notifications.NotificationDto
-            {
-                Theme = $"Добавлен новый товар - ",
-                Email = "email@email.com",
-                Text = $"Добавлен новый товар - ",
-                NotificationChannels = [NotificationChannelEnum.Email, NotificationChannelEnum.Telegram]
-            }, cancellation);
             if (request == null)
             {
                 throw new ArgumentNullException(nameof(request));

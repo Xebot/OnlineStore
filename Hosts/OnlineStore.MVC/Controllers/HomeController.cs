@@ -37,7 +37,7 @@ namespace OnlineStore.MVC.Controllers
                 PageNumber = pageNumber,
                 PageSize = 6
             }, cancellation);
-            
+
             return View(result);
         }
 
