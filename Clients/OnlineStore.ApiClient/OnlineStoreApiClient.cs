@@ -58,10 +58,13 @@ namespace OnlineStore.ApiClient
             var json = JsonSerializer.Serialize(body);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            using var httpRequest = CreateRequest(HttpMethod.Post, content, requestUri);
+            var httpRequest = CreateRequest(HttpMethod.Post, content, requestUri);
             var response = await _httpClient.SendAsync(httpRequest, cancellation);
 
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+            }
         }
 
         private HttpRequestMessage CreateRequest(HttpMethod method, HttpContent content, string uri)

@@ -7,7 +7,7 @@ namespace OnlineStore.MVC.WebApi
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[JwtAuthorize]
+    [JwtAuthorize]
     public class ProductsController : ControllerBase
     {
         private readonly IProductService _productService;

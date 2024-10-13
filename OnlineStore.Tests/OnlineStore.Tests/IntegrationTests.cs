@@ -62,7 +62,7 @@ public class ProductsControllerTests : IClassFixture<WebApplicationFactory<Progr
         response.EnsureSuccessStatusCode();
 
         // Assert
-        var products = await response.Content.ReadFromJsonAsync<List<Product>>();
+        var products = await response.Content.ReadFromJsonAsync<ProductsListDto>();
 
         Assert.NotNull(products);
     }

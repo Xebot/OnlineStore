@@ -24,7 +24,7 @@ namespace OnlineStore.Contracts.Products
         /// <summary>
         /// Описание.
         /// </summary>
-        public string Description { get; set; }
+        public string Description { get; set; } = default!;
 
         /// <summary>
         /// Цена.
@@ -49,6 +49,6 @@ namespace OnlineStore.Contracts.Products
         /// <summary>
         /// Список изображений.
         /// </summary>
-        public string[] ImagesUrls {  get; set; }
+        public string[] ImagesUrls { get; set; }
     }
 }

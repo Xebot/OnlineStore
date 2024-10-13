@@ -33,7 +33,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineStore.ApiClient", "Cl
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{3E0C5FF4-19F3-4A5E-AABB-B67748071F97}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineStore.Tests", "OnlineStore.Tests\OnlineStore.Tests\OnlineStore.Tests.csproj", "{8FD7BF42-700E-4A96-9DC8-85A3EB46B58A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnlineStore.Tests", "OnlineStore.Tests\OnlineStore.Tests\OnlineStore.Tests.csproj", "{8FD7BF42-700E-4A96-9DC8-85A3EB46B58A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OnlineStore.MessageQueue.Daemon", "OnlineStore.MessageQueue.Daemon\OnlineStore.MessageQueue.Daemon.csproj", "{E6C51C82-F334-4154-90E9-E54DA7171DF3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,6 +79,10 @@ Global
 		{8FD7BF42-700E-4A96-9DC8-85A3EB46B58A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8FD7BF42-700E-4A96-9DC8-85A3EB46B58A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8FD7BF42-700E-4A96-9DC8-85A3EB46B58A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6C51C82-F334-4154-90E9-E54DA7171DF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6C51C82-F334-4154-90E9-E54DA7171DF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6C51C82-F334-4154-90E9-E54DA7171DF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6C51C82-F334-4154-90E9-E54DA7171DF3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -91,6 +97,7 @@ Global
 		{9AE26E5C-74FB-410A-9D9F-44F00F80F7A0} = {8214DF4E-B418-4062-811B-BF6B5499EE58}
 		{C5170189-CF49-4550-A159-D14163199632} = {AE75BF00-BCFF-43F1-871C-76F77E32EDFA}
 		{8FD7BF42-700E-4A96-9DC8-85A3EB46B58A} = {3E0C5FF4-19F3-4A5E-AABB-B67748071F97}
+		{E6C51C82-F334-4154-90E9-E54DA7171DF3} = {0E047A01-D62E-46CC-B51E-B2A679D5B00F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FC0EFB93-1195-4BBD-80B6-7D0E0C8F3733}
