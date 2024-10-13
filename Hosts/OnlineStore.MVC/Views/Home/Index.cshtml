@@ -30,11 +30,39 @@
                 </li>
             }
 
-            <li class="page-item active">
-                <span class="page-link">@Model.PageNumber</span>
-            </li>
+            <!-- Показ нескольких номеров страниц -->
+            @{
+                var pagesCount = Math.Ceiling((decimal)Model.TotalCount / Model.PageSize);
+            }
+            @for (var i = 1; i <= pagesCount; i++)
+            {
+                if (i == Model.PageNumber)
+                {
+                    <li class="page-item active">
+                        <span class="page-link">@i</span>
+                    </li>
+                }
+                else if (i <= 3 || i == Model.TotalCount || (i >= Model.PageNumber - 2 && i <= Model.PageNumber + 2))
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("Index", new { pageNumber = i })">@i</a>
+                    </li>
+                }
+                else if (i == 4)
+                {
+                    <li class="page-item">
+                        <span class="page-link">...</span>
+                    </li>
+                }
+                else if (i == pagesCount)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("Index", new { pageNumber = i })">@i</a>
+                    </li>
+                }
+            }
 
-            @if (Model.PageNumber < Math.Ceiling((decimal)Model.TotalCount / Model.PageSize))
+            @if (Model.PageNumber < pagesCount)
             {
                 <li class="page-item">
                     <a class="page-link" href="@Url.Action("Index", new { pageNumber = Model.PageNumber + 1 })">Вперед</a>
@@ -43,17 +71,3 @@
         </ul>
     </nav>
 </div>
-
-<script>
-    $(document).ready(function () {
-        $('.add-to-cart-btn').click(function () {
-            var productId = $(this).data('product-id');
-            $.post('@Url.Action("AddToCart", "Cart")', { id: productId }, function (response) {
-                alert("Товар добавлен в корзину");
-
-                // Обновление счетчика корзины
-                $('#cart-count').text(response.cartCount);
-            });
-        });
-    });
-</script>

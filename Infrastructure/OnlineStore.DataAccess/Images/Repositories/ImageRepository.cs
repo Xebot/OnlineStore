@@ -1,4 +1,5 @@
-﻿using OnlineStore.AppServices.Images.Repositories;
+﻿using Microsoft.EntityFrameworkCore;
+using OnlineStore.AppServices.Images.Repositories;
 using OnlineStore.DataAccess.Common;
 using OnlineStore.Domain.Entities;
 using System;
@@ -15,6 +16,11 @@ namespace OnlineStore.DataAccess.Images.Repositories
             ReadonlyOnlineStoreDbContext readOnlyDbContext) 
             : base(mutableDbContext, readOnlyDbContext)
         {
+        }
+
+        public Task<ProductImage?> GetByUrlAsync(string url, CancellationToken cancellation)
+        {
+            return MutableDbContext.Set<ProductImage>().FirstOrDefaultAsync(i => i.Url == url, cancellation);
         }
 
         public async Task<int> SaveAsync(ProductImage image, CancellationToken cancellation)

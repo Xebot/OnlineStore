@@ -45,5 +45,10 @@ namespace OnlineStore.Contracts.Products
         /// Главное изображение.
         /// </summary>
         public string ImageUrl { get; set; }
+
+        /// <summary>
+        /// Список изображений.
+        /// </summary>
+        public string[] ImagesUrls {  get; set; }
     }
 }

@@ -5,6 +5,8 @@ namespace OnlineStore.AppServices.Images.Repositories
 {
     public interface IImageRepository : IRepository<ProductImage>
     {
-        public Task<int> SaveAsync(ProductImage image, CancellationToken cancellation);
+        Task<int> SaveAsync(ProductImage image, CancellationToken cancellation);
+
+        Task<ProductImage?> GetByUrlAsync(string url, CancellationToken cancellation);
     }
 }

@@ -14,6 +14,9 @@ using OnlineStore.Domain.Entities;
 
 namespace OnlineStore.AppServices.Products.Services
 {
+    /// <summary>
+    /// Сервис по работе с товарами.
+    /// </summary>
     public sealed class ProductService : IProductService
     {
         private readonly IProductRepository _repository;
@@ -23,6 +26,7 @@ namespace OnlineStore.AppServices.Products.Services
         private readonly IImageService _imageService;
         private readonly INotificationService _notificationService;
 
+        /// <inheritdoc/>
         public ProductService(
             IProductRepository repository,
             IMapper mapper,
@@ -39,25 +43,18 @@ namespace OnlineStore.AppServices.Products.Services
             _notificationService = notificationService;
         }
 
-        public async Task AddProductAsync(ShortProductDto productDto, IFormFile imageFile, CancellationToken cancellationToken)
+        /// <inheritdoc/>
+        public async Task AddProductAsync(ShortProductDto productDto, CancellationToken cancellation)
         {
-            var imageId = await _imageService.SaveImageAsync(imageFile, cancellationToken);
-
             var domainProduct = _mapper.Map<Product>(productDto);
-            domainProduct.ImageUrl = $"https://localhost:7194/images/{imageId}";
+            domainProduct.Images = await _imageService.SaveProductImagesAsync(productDto.ImagesUrls, domainProduct, cancellation);
 
-            await _repository.AddAsync(domainProduct);
+            await _repository.AddAsync(domainProduct, cancellation);
         }
 
+        /// <inheritdoc/>
         public async Task<ProductsListDto> GetProductsAsync(PagedRequest request, CancellationToken cancellation)
         {
-            await _notificationService.SendNotificationAsync(new Contracts.Notifications.NotificationDto
-            {
-                Theme = $"Добавлен новый товар - ",
-                Email = "email@email.com",
-                Text = $"Добавлен новый товар - ",
-                NotificationChannels = [NotificationChannelEnum.Email, NotificationChannelEnum.Telegram]
-            }, cancellation);
             if (request == null)
             {
                 throw new ArgumentNullException(nameof(request));

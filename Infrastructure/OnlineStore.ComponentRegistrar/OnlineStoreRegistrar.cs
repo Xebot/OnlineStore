@@ -12,6 +12,8 @@ using OnlineStore.ApiClient;
 using OnlineStore.AppServices.Attributes.Repositories;
 using OnlineStore.AppServices.Attributes.Services;
 using OnlineStore.AppServices.Authentication.Services;
+using OnlineStore.AppServices.Carts.Repositories;
+using OnlineStore.AppServices.Carts.Services;
 using OnlineStore.AppServices.Categories.Repositories;
 using OnlineStore.AppServices.Categories.Services;
 using OnlineStore.AppServices.Common.CacheService;
@@ -26,6 +28,7 @@ using OnlineStore.AppServices.Images.Services;
 using OnlineStore.AppServices.Products.Repositories;
 using OnlineStore.AppServices.Products.Services;
 using OnlineStore.DataAccess.Attributes.Repositories;
+using OnlineStore.DataAccess.Carts.Repositories;
 using OnlineStore.DataAccess.Categories.Repositories;
 using OnlineStore.DataAccess.Common;
 using OnlineStore.DataAccess.Events;
@@ -93,6 +96,7 @@ namespace OnlineStore.ComponentRegistrar
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IImageRepository, ImageRepository>();
+            services.AddScoped<ICartRepository, CartRepository>();
         }
 
         private static void RegisterServices(IServiceCollection services, IConfiguration configuration)
@@ -109,6 +113,7 @@ namespace OnlineStore.ComponentRegistrar
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IImageService, ImageService>();
+            services.AddScoped<ICartService, CartService>();
 
             services.AddSingleton<IRedisCache, RedisCache>();
             services.AddSingleton<ICacheService, RedisCacheService>();
@@ -130,6 +135,7 @@ namespace OnlineStore.ComponentRegistrar
             if (decorationSettings?.EnableDecoration == true)
             {
                 services.Decorate<IProductAttributeService, CachedProductAttributeService>();
+                services.Decorate<ICartService, CachedCartService>();
             }
 
             services.Scan(scan => 
