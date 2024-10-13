@@ -22,7 +22,7 @@ namespace OnlineStore.MVC.WebApi
         [HttpPost]
         public async Task<IActionResult> AddProductAsync([FromBody] ShortProductDto productDto, CancellationToken cancellation)
         {
-            await _productService.AddProductAsync(productDto, null, cancellation);
+            await _productService.AddProductAsync(productDto, cancellation);
 
             return NoContent();
         }

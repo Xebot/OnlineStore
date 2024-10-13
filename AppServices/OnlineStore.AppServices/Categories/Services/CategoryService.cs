@@ -24,7 +24,7 @@ namespace OnlineStore.AppServices.Categories.Services
 
         public async Task<IReadOnlyCollection<CategoryDto>> GetCategoriesAsync(CancellationToken cancellation)
         {
-            var result = await _repository.GetAllAsync();
+            var result = await _repository.GetAllAsync(cancellation);
 
             return _mapper.Map<IReadOnlyCollection<CategoryDto>>(result);
         }

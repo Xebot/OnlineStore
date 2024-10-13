@@ -62,7 +62,7 @@
                 }
             }
 
-            @if (Model.PageNumber < Model.TotalCount)
+            @if (Model.PageNumber < pagesCount)
             {
                 <li class="page-item">
                     <a class="page-link" href="@Url.Action("Index", new { pageNumber = Model.PageNumber + 1 })">Вперед</a>
@@ -71,17 +71,3 @@
         </ul>
     </nav>
 </div>
-
-<script>
-    $(document).ready(function () {
-        $('.add-to-cart-btn').click(function () {
-            var productId = $(this).data('product-id');
-            $.post('@Url.Action("AddToCart", "Cart")', { id: productId }, function (response) {
-                alert("Товар добавлен в корзину");
-
-                // Обновление счетчика корзины
-                $('#cart-count').text(response.cartCount);
-            });
-        });
-    });
-</script>

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using OnlineStore.AppServices.Images.Services;
+using OnlineStore.Contracts.Images;
 
 namespace OnlineStore.MVC.Controllers
 {
@@ -19,5 +20,21 @@ namespace OnlineStore.MVC.Controllers
 
             return File(image.Data, image.ContentType);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadImages(List<IFormFile> ImageFiles, CancellationToken cancellation)
+        {
+            var imageUrls = await _imageService.SaveImagesAsync(ImageFiles, cancellation);
+
+            return Json(imageUrls);
+        }
+
+        [HttpPost]
+        public IActionResult DeleteImage([FromBody] ImageDeleteRequest imageUrl)
+        {
+            return Ok();
+        }
+
+        
     }
 }

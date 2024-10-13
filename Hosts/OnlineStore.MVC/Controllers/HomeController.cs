@@ -50,9 +50,9 @@ namespace OnlineStore.MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddProduct(ShortProductDto productDto, IFormFile imageFile, CancellationToken cancellation)
+        public async Task<IActionResult> AddProduct(ShortProductDto productDto, CancellationToken cancellation)
         {
-            await _productService.AddProductAsync(productDto, imageFile, cancellation);
+            await _productService.AddProductAsync(productDto, cancellation);
 
             return Ok();
         }

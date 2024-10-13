@@ -36,9 +36,9 @@
                             <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l.5 2H5V5H3.14zM6 5v2h2V5H6zm3 0v2h2V5H9zm3 0v2h1.36l.5-2H12zm1.11 3H12v2h.61l.5-2zM11 8H9v2h2V8zM8 8H6v2h2V8zM5 8H3.89l.5 2H5V8zm0 5a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"></path>
                         </svg>
                         Корзина
-                    </button>
-                    <span id="cart-count" class="badge badge-pill badge-danger">@ViewBag.CartCount</span>
+                    </button>                    
                 </ul>
+                <span id="cart-count" class="badge badge-pill badge-danger" style="margin-left: -10px; margin-top: -30px;">0</span>            
             </div>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ml-auto">
@@ -154,7 +154,84 @@
                     }
                 });
             });
+
+            $('.add-to-cart-btn').click(function () {                
+                var productId = $(this).data('product-id');
+                debugger;
+                var isAuthenticated = '@User.Identity.IsAuthenticated' === 'True';
+                if (isAuthenticated) {
+                    $.post('@Url.Action("AddToCart", "Cart")', { id: productId }, function (response) {
+                        alert("Товар добавлен в корзину");
+
+                        // Обновление счетчика корзины
+                        $('#cart-count').text(response.cartCount);
+                    });
+                }
+                else{
+                    addToLocalStorageCart(productId);
+                    alert('Товар добавлен в корзину');
+                }                
+            });
+
+            // let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            // updateCartIcon(cart);
+
+            var isAuthenticated = '@User.Identity.IsAuthenticated' === 'True';
+
+            if (isAuthenticated) {
+                // Если пользователь авторизован, делаем асинхронный запрос на сервер для получения количества товаров в корзине
+                $.ajax({
+                    type: 'GET',
+                    url: '/Cart/GetCartItemCount', // URL, который возвращает количество товаров в корзине
+                    success: function (response) {
+                        // Обновляем счетчик корзины
+                        $('#cart-count').text(response.cartItemCount);
+                    },
+                    error: function (error) {
+                        console.error('Ошибка при получении количества товаров в корзине:', error);
+                    }
+                });
+            } 
+            else {
+                // Если пользователь не авторизован, берем данные из LocalStorage
+                var cart = JSON.parse(localStorage.getItem('cart')) || [];
+                var totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+                // Обновляем счетчик корзины
+                $('#cart-count').text(totalCount);
+            }
         });
+
+        function addToLocalStorageCart(productId) {
+            // Получаем текущую корзину из LocalStorage
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            // Проверяем, есть ли уже этот товар в корзине
+            let existingItem = cart.find(item => item.productId === productId);
+
+            if (existingItem) {
+                // Если товар уже есть, увеличиваем количество
+                existingItem.quantity += 1;
+            } else {
+                // Если товара нет, добавляем его в корзину
+                cart.push({ productId: productId, quantity: 1 });
+            }
+
+            // Сохраняем обновленную корзину в LocalStorage
+            localStorage.setItem('cart', JSON.stringify(cart));
+
+            debugger;
+            // Обновляем счетчик в иконке корзины
+            updateCartIcon(cart);
+        }
+
+        // Функция для обновления счетчика товаров в корзине на иконке
+        function updateCartIcon(cart) {
+            debugger;
+            let totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            $('#cart-count').text(totalCount);
+        }
+
     </script>
 
     @RenderSection("Scripts", required: false)

@@ -18,11 +18,11 @@ namespace OnlineStore.DataAccess.Products.Repositories
         }
 
         /// <inheritdoc/>
-        public async override Task<List<Product>> GetAllAsync()
+        public async override Task<List<Product>> GetAllAsync(CancellationToken cancellation)
         {
             return await ReadOnlyDbContext.Set<Product>()
                 .Include(x => x.Category)
-                .ToListAsync();
+                .ToListAsync(cancellation);
         }
 
         /// <inheritdoc/>
@@ -46,6 +46,7 @@ namespace OnlineStore.DataAccess.Products.Repositories
             }
 
             query = query
+                .OrderBy(x => x.Id)
                 .Skip(request.Skip)
                 .Take(request.Take);
 
