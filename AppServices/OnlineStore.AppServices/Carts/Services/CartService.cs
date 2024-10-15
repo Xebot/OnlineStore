@@ -54,14 +54,14 @@ namespace OnlineStore.AppServices.Carts.Services
                     StatusId = (int)CartStatusEnum.New
                 };
 
-                AddPoductToCart(existingCart, productId);
+                AddProductToCart(existingCart, productId);
 
                 await _cartRepository.AddAsync(existingCart, cancellation);
             }
             else
             {
                 existingCart.Updated = _dateTimeProvider.UtcNow;
-                AddPoductToCart(existingCart, productId);
+                AddProductToCart(existingCart, productId);
                 await _cartRepository.UpdateAsync(existingCart, cancellation);
             }
         }        
@@ -80,7 +80,7 @@ namespace OnlineStore.AppServices.Carts.Services
             return existingCart?.Products?.Sum(x => x.Quantity) ?? 0;
         }
 
-        private static void AddPoductToCart(Cart cart, int productId)
+        private static void AddProductToCart(Cart cart, int productId)
         {
             var productInCart = cart.Products.FirstOrDefault(p => p.ProductId == productId);
 

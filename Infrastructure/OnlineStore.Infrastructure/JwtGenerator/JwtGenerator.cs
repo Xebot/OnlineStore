@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -10,6 +11,13 @@ namespace OnlineStore.Infrastructure.JwtGenerator
     /// </summary>
     public sealed class JwtGenerator : IJwtGenerator
     {
+        private readonly JwtOptions _jwtOptions;
+
+        public JwtGenerator(IOptions<JwtOptions> jwtOptions)
+        {
+            _jwtOptions = jwtOptions.Value;
+        }
+
         /// <inheritdoc/>
         public string GenerateToken()
         {
@@ -19,12 +27,12 @@ namespace OnlineStore.Infrastructure.JwtGenerator
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("In that case the Microsoft.IdentityModel.JsonWebTokens library throws an exception similar to the one you describe "));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Key));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                issuer: "Jwt:Issuer",
-                audience: "Jwt:Audience",
+                issuer: _jwtOptions.Issuer,
+                audience: _jwtOptions.Audience,
                 claims: claims,
                 expires: DateTime.Now.AddMinutes(30),
                 signingCredentials: creds);

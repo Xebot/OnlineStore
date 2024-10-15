@@ -17,8 +17,9 @@ namespace OnlineStore.MVC.Controllers
         public async Task<IActionResult> AddToCart(int id, CancellationToken cancellation)
         {
             await _cartService.AddProductToCartAsync(id, cancellation);
-            var cartCount = await _cartService.GetCartItemCountAsync(cancellation);
-            return Json(new { success = true, cartCount });
+            //var cartCount = await _cartService.GetCartItemCountAsync(cancellation);
+            //return Json(new { success = true, cartCount });
+            return Ok();
         }
 
         [HttpGet]

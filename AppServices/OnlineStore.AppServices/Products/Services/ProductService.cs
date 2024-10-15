@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using OnlineStore.ApiClient;
 using OnlineStore.AppServices.Common.DateTimeProviders;
 using OnlineStore.AppServices.Common.Events.Common;
 using OnlineStore.AppServices.Common.NotificationServices;

@@ -157,7 +157,6 @@
 
             $('.add-to-cart-btn').click(function () {                
                 var productId = $(this).data('product-id');
-                debugger;
                 var isAuthenticated = '@User.Identity.IsAuthenticated' === 'True';
                 if (isAuthenticated) {
                     $.post('@Url.Action("AddToCart", "Cart")', { id: productId }, function (response) {
@@ -220,14 +219,12 @@
             // Сохраняем обновленную корзину в LocalStorage
             localStorage.setItem('cart', JSON.stringify(cart));
 
-            debugger;
             // Обновляем счетчик в иконке корзины
             updateCartIcon(cart);
         }
 
         // Функция для обновления счетчика товаров в корзине на иконке
         function updateCartIcon(cart) {
-            debugger;
             let totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
             $('#cart-count').text(totalCount);
         }

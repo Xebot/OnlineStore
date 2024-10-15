@@ -40,7 +40,9 @@ using OnlineStore.Infrastructure.JwtGenerator;
 using OnlineStore.Infrastructure.Mappings;
 using StackExchange.Redis.Extensions.Core.Configuration;
 using StackExchange.Redis.Extensions.Newtonsoft;
+using System.Data.Entity;
 using System.Text;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace OnlineStore.ComponentRegistrar
 {
@@ -55,6 +57,7 @@ namespace OnlineStore.ComponentRegistrar
                 .AddEntityFrameworkStores<MutableOnlineStoreDbContext>()
                 .AddDefaultTokenProviders();
 
+            var jwtOptions = configuration.GetSection("JwtOptions").Get<JwtOptions>();
             services.AddAuthentication()
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
@@ -64,22 +67,29 @@ namespace OnlineStore.ComponentRegistrar
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = "Jwt:Issuer",
-                        ValidAudience = "Jwt:Audience",
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("In that case the Microsoft.IdentityModel.JsonWebTokens library throws an exception similar to the one you describe "))
+                        ValidIssuer = jwtOptions.Issuer,
+                        ValidAudience = jwtOptions.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key))
                     };
                 });
 
             RegisterRepositories(services, configuration);
             RegisterServices(services, configuration);
             RegisterMapper(services);
-            RegisterApiClients(services);
+            RegisterApiClients(services, configuration);
             RegisterScheduler(services, configuration);
+            RegisterOptions(services, configuration);
         }
 
         public static void RegisterMiddlewares(WebApplication app)
         {
             app.UseMiddleware<TransactionMiddleware>();
+        }
+
+        private static void RegisterOptions(IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<OnlineShopApiClientOptions>(configuration.GetSection("OnlineShopApiClient"));
+            services.Configure<JwtOptions>(configuration.GetSection("JwtOptions"));
         }
 
         private static void RegisterRepositories(IServiceCollection services, IConfiguration configuration)
@@ -159,11 +169,12 @@ namespace OnlineStore.ComponentRegistrar
             services.AddSingleton(mapper);
         }
 
-        private static void RegisterApiClients(IServiceCollection services)
+        private static void RegisterApiClients(IServiceCollection services, IConfiguration configuration)
         {
+            var apiOptions = configuration.GetSection("OnlineShopApiClient").Get<OnlineShopApiClientOptions>();
             services.AddHttpClient<IOnlineStoreApiClient, OnlineStoreApiClient>(client =>
             {
-                client.BaseAddress = new Uri("https://localhost:7194/api/");
+                client.BaseAddress = new Uri(apiOptions.BaseUrl);
             });
         }
 
