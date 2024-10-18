@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using OnlineStore.ApiClient;
 using OnlineStore.AppServices.Categories.Services;
 using OnlineStore.AppServices.Products.Services;
 using OnlineStore.Contracts.Common;
@@ -14,18 +13,15 @@ namespace OnlineStore.MVC.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IOnlineStoreApiClient _apiClient;
         private readonly IProductService _productService;
         private readonly ICategoryService _categoryService;
 
         public HomeController(
             ILogger<HomeController> logger,
-            IOnlineStoreApiClient apiClient,
             IProductService productService,
             ICategoryService categoryService)
         {
             _logger = logger;
-            _apiClient = apiClient;
             _productService = productService;
             _categoryService = categoryService;
         }

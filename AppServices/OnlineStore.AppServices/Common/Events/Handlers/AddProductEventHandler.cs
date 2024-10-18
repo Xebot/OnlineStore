@@ -1,7 +1,9 @@
 ﻿using OnlineStore.AppServices.Common.Events.Common;
 using OnlineStore.AppServices.Common.NotificationServices;
+using OnlineStore.AppServices.MessageQueue.Services;
 using OnlineStore.Contracts.Enums;
 using OnlineStore.Domain.Events;
+using System.Runtime.CompilerServices;
 
 namespace OnlineStore.AppServices.Common.Events.Handlers
 {
@@ -11,16 +13,20 @@ namespace OnlineStore.AppServices.Common.Events.Handlers
     public sealed class AddProductEventHandler : IDomainEventHandler<AddProductEvent>
     {
         private readonly INotificationService _notificationService;
+        private readonly IMessageQueueService _messageQueueService;
 
         public AddProductEventHandler(
-            INotificationService notificationService)
+            INotificationService notificationService,
+            IMessageQueueService messageQueueService)
         {
             _notificationService = notificationService;
+            _messageQueueService = messageQueueService;
         }
 
         /// <inheritdoc/>
         public Task HandleAsync(AddProductEvent @event)
         {
+            return _messageQueueService.SendMessageAsync(new object(), CancellationToken.None);
             return _notificationService.SendNotificationAsync(new Contracts.Notifications.NotificationDto
             {
                 Theme = $"Добавлен новый товар - {@event.ProductName}",

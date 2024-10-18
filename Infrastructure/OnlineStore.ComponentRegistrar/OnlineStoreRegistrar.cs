@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Hangfire;
 using Hangfire.PostgreSql;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -8,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using OnlineStore.ApiClient;
 using OnlineStore.AppServices.Attributes.Repositories;
 using OnlineStore.AppServices.Attributes.Services;
@@ -23,8 +25,11 @@ using OnlineStore.AppServices.Common.Events.Handlers;
 using OnlineStore.AppServices.Common.Models;
 using OnlineStore.AppServices.Common.NotificationServices;
 using OnlineStore.AppServices.Common.Redis;
+using OnlineStore.AppServices.Common.Telegram.Options;
+using OnlineStore.AppServices.Common.Telegram.Services;
 using OnlineStore.AppServices.Images.Repositories;
 using OnlineStore.AppServices.Images.Services;
+using OnlineStore.AppServices.MessageQueue.Services;
 using OnlineStore.AppServices.Products.Repositories;
 using OnlineStore.AppServices.Products.Services;
 using OnlineStore.DataAccess.Attributes.Repositories;
@@ -40,9 +45,8 @@ using OnlineStore.Infrastructure.JwtGenerator;
 using OnlineStore.Infrastructure.Mappings;
 using StackExchange.Redis.Extensions.Core.Configuration;
 using StackExchange.Redis.Extensions.Newtonsoft;
-using System.Data.Entity;
 using System.Text;
-using static Org.BouncyCastle.Math.EC.ECCurve;
+using Telegram.Bot;
 
 namespace OnlineStore.ComponentRegistrar
 {
@@ -73,6 +77,24 @@ namespace OnlineStore.ComponentRegistrar
                     };
                 });
 
+            services.AddMassTransit(x =>
+            {
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.Host("rabbitmq://localhost", h =>
+                    {
+                        h.Username("guest");
+                        h.Password("guest");
+                    });
+                    cfg.ConfigureEndpoints(context);
+                });
+            });
+
+            var botConfig = configuration.GetSection("TelegramBotOptions").Get<TelegramBotOptions>();            
+
+            services.AddSingleton<ITelegramBotClient>(provider =>
+                     new TelegramBotClient(botConfig.SecretToken));
+
             RegisterRepositories(services, configuration);
             RegisterServices(services, configuration);
             RegisterMapper(services);
@@ -90,6 +112,7 @@ namespace OnlineStore.ComponentRegistrar
         {
             services.Configure<OnlineShopApiClientOptions>(configuration.GetSection("OnlineShopApiClient"));
             services.Configure<JwtOptions>(configuration.GetSection("JwtOptions"));
+            services.Configure<TelegramBotOptions>(configuration.GetSection("TelegramBotOptions"));
         }
 
         private static void RegisterRepositories(IServiceCollection services, IConfiguration configuration)
@@ -128,10 +151,13 @@ namespace OnlineStore.ComponentRegistrar
             services.AddSingleton<IRedisCache, RedisCache>();
             services.AddSingleton<ICacheService, RedisCacheService>();
             services.AddSingleton<IJwtGenerator, JwtGenerator>();
-            services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+            services.AddSingleton<IDateTimeProvider, DateTimeProvider>();            
 
             services.AddScoped<IEventDispatcher, EventDispatcher>();
             services.AddScoped<IEventAccumulator, EventAccumulator>();
+            services.AddScoped<ITelegramService, TelegramService>();
+
+            services.AddScoped<IMessageQueueService, MessageQueueService>();
 
             #region Notifications
             services.AddScoped<INotificationStrategy, EmailNotificationStrategy>();

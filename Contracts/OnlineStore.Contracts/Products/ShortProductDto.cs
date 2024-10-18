@@ -49,6 +49,6 @@ namespace OnlineStore.Contracts.Products
         /// <summary>
         /// Список изображений.
         /// </summary>
-        public string[] ImagesUrls {  get; set; }
+        public string[] ImagesUrls { get; set; } = [];
     }
 }

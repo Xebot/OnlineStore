@@ -61,6 +61,10 @@ namespace OnlineStore.ApiClient
             using var httpRequest = CreateRequest(HttpMethod.Post, content, requestUri);
             var response = await _httpClient.SendAsync(httpRequest, cancellation);
 
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception(response.Content.ToString());
+            }
             response.EnsureSuccessStatusCode();
         }
 
