@@ -2,13 +2,10 @@
 using Microsoft.AspNetCore.Identity;
 using OnlineStore.AppServices.Carts.Repositories;
 using OnlineStore.AppServices.Common.DateTimeProviders;
+using OnlineStore.AppServices.Products.Services;
+using OnlineStore.Contracts.Cart;
 using OnlineStore.Contracts.Enums;
 using OnlineStore.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OnlineStore.AppServices.Carts.Services
 {
@@ -21,16 +18,19 @@ namespace OnlineStore.AppServices.Carts.Services
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IDateTimeProvider _dateTimeProvider;
+        private readonly IProductService _productService;
 
         public CartService(ICartRepository cartRepository,
             UserManager<ApplicationUser> userManager,
             IHttpContextAccessor httpContextAccessor,
-            IDateTimeProvider dateTimeProvider)
+            IDateTimeProvider dateTimeProvider,
+            IProductService productService)
         {
             _cartRepository = cartRepository;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
             _dateTimeProvider = dateTimeProvider;
+            _productService = productService;
         }
 
 
@@ -68,14 +68,7 @@ namespace OnlineStore.AppServices.Carts.Services
 
         public async Task<int?> GetCartItemCountAsync(CancellationToken cancellation)
         {
-            var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-
-            if (user == null)
-            {
-                return null;
-            }
-
-            var existingCart = await _cartRepository.GetCartByUserAsync(user.Id, cancellation);
+            var existingCart = await GetCurrentUserCartAsync(cancellation);
 
             return existingCart?.Products?.Sum(x => x.Quantity) ?? 0;
         }
@@ -98,5 +91,73 @@ namespace OnlineStore.AppServices.Carts.Services
                 });
             }
         }
+
+        /// <inheritdoc/>
+        public async Task<CartDto> GetCartAsync(CancellationToken cancellation)
+        {
+            var cart = await GetCurrentUserCartAsync(cancellation);
+
+            if (cart == null)
+            {
+                return new CartDto
+                {
+                    Items = [],
+                    TotalAmount = 0
+                };
+            }
+
+            return await GetCartItemsAsync(cart, cancellation);
+        }
+
+        public async Task RemoveItemAsync(int productId, CancellationToken cancellation)
+        {
+            var cart = await GetCurrentUserCartAsync(cancellation) 
+                ?? throw new InvalidOperationException("Не найдена корзина текущего пользователя");
+
+            var productInCart = cart.Products.FirstOrDefault(cp => cp.ProductId == productId)
+                ?? throw new InvalidOperationException("Не найден товар в корзине текущего пользователя для удаления");
+
+            cart.Products.Remove(productInCart);
+
+            await _cartRepository.UpdateAsync(cart, cancellation);
+        }
+
+        private async Task<Cart> GetCurrentUserCartAsync(CancellationToken cancellation)
+        {
+            var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+
+            if (user == null)
+            {
+                return null;
+            }
+
+            return await _cartRepository.GetCartByUserAsync(user.Id, cancellation);
+        }
+
+        private async Task<CartDto> GetCartItemsAsync(Cart cart, CancellationToken cancellation)
+        {
+            var products = await _productService.GetProductsAsync(new Contracts.Common.PagedRequest(), cancellation);
+
+            var cartItems = new List<CartItemDto>(products.Result.Count);
+            var totalAmount = 0m;
+            foreach (var productInCart in cart.Products)
+            {
+                var product = products.Result.FirstOrDefault(x => x.Id == productInCart.ProductId);
+                cartItems.Add(new CartItemDto
+                {
+                    Price = product.Price,
+                    ProductId = product.Id,
+                    ProductName = product.Name,
+                    Quantity = productInCart.Quantity
+                });
+                totalAmount += product.Price * productInCart.Quantity;
+            }
+
+            return new CartDto
+            {
+                Items = cartItems,
+                TotalAmount = Math.Round(totalAmount, 2)
+            };
+        }        
     }
 }

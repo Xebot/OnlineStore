@@ -47,8 +47,12 @@ namespace OnlineStore.DataAccess.Products.Repositories
 
             query = query
                 .OrderBy(x => x.Id)
-                .Skip(request.Skip)
-                .Take(request.Take);
+                .Skip(request.Skip);
+
+            if (request.Take != default)
+            {
+                query = query.Take(request.Take);
+            }
 
             return query.ToListAsync(cancellation);
         }

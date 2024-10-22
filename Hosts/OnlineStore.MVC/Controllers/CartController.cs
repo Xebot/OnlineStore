@@ -17,9 +17,8 @@ namespace OnlineStore.MVC.Controllers
         public async Task<IActionResult> AddToCart(int id, CancellationToken cancellation)
         {
             await _cartService.AddProductToCartAsync(id, cancellation);
-            //var cartCount = await _cartService.GetCartItemCountAsync(cancellation);
-            //return Json(new { success = true, cartCount });
-            return Ok();
+            var cartCount = await _cartService.GetCartItemCountAsync(cancellation);
+            return Json(new { success = true, cartCount });
         }
 
         [HttpGet]
@@ -28,6 +27,21 @@ namespace OnlineStore.MVC.Controllers
             var cartItemCount = await _cartService.GetCartItemCountAsync(cancellation);
 
             return Json(new { cartItemCount });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Index(CancellationToken cancellation)
+        {
+            var cart = await _cartService.GetCartAsync(cancellation);            
+
+            return View(cart);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveFromCart(int productId, CancellationToken cancellation)
+        {
+            await _cartService.RemoveItemAsync(productId, cancellation);
+            return RedirectToAction("Index");
         }
     }
 }

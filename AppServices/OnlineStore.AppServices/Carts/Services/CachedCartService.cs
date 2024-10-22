@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using OnlineStore.AppServices.Carts.Helpers;
 using OnlineStore.AppServices.Common.CacheService;
+using OnlineStore.Contracts.Cart;
 using OnlineStore.Domain.Entities;
 
 namespace OnlineStore.AppServices.Carts.Services
@@ -44,6 +45,12 @@ namespace OnlineStore.AppServices.Carts.Services
         }
 
         /// <inheritdoc/>
+        public Task<CartDto> GetCartAsync(CancellationToken cancellation)
+        {
+            return _cartService.GetCartAsync(cancellation);
+        }
+
+        /// <inheritdoc/>
         public async Task<int?> GetCartItemCountAsync(CancellationToken cancellation)
         {
             var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
@@ -58,6 +65,20 @@ namespace OnlineStore.AppServices.Carts.Services
                 lifeTime: TimeSpan.FromMinutes(60),
                 func:async () => (await _cartService.GetCartItemCountAsync(cancellation)),
                 cancellation: cancellation);
+        }
+
+        public async Task RemoveItemAsync(int productId, CancellationToken cancellation)
+        {
+            await _cartService.RemoveItemAsync(productId, cancellation);
+
+            var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+
+            if (user == null)
+            {
+                return;
+            }
+
+            await _cacheService.RemoveAsync(CartRedisKeyHelper.GetCartItemsCountKey(user.Id), cancellation);
         }
     }
 }
