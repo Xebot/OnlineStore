@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using MassTransit.Configuration;
+using Microsoft.AspNetCore.Http;
 using OnlineStore.AppServices.Images.Repositories;
 using OnlineStore.Contracts.Images;
 using OnlineStore.Domain.Entities;
@@ -8,6 +9,7 @@ namespace OnlineStore.AppServices.Images.Services
     public sealed class ImageService : IImageService
     {
         private readonly IImageRepository _repository;
+
         public ImageService(
             IImageRepository repository)
         {
@@ -23,6 +25,22 @@ namespace OnlineStore.AppServices.Images.Services
                 ContentType = image.ContentType,
                 Data = image.Content
             };
+        }
+
+        public string[] GetImagesUrls(ProductImage[] images)
+        {
+            if(images.Length == 0)
+            {
+                return [];
+            }
+
+            var urls = new List<string>(images.Length);
+            foreach(var image in images)
+            {
+                urls.Add($"https://localhost:7194/images/{image.Id}");
+            }
+
+            return [.. urls];
         }
 
         public async Task<string> SaveImageAsync(IFormFile imageFile, CancellationToken cancellation)

@@ -55,6 +55,18 @@ namespace OnlineStore.AppServices.Products.Services
         }
 
         /// <inheritdoc/>
+        public async Task<ShortProductDto> GetProductByIdAsync(int productId, CancellationToken cancellation)
+        {
+            var product = await _repository.GetAsync(productId)
+                ?? throw new Exception($"Не найден продукт Id = {productId}");
+
+            var result = _mapper.Map<ShortProductDto>(product);
+            result.ImagesUrls = _imageService.GetImagesUrls(product.Images.ToArray());
+
+            return result;
+        }
+
+        /// <inheritdoc/>
         public async Task<ProductsListDto> GetProductsAsync(PagedRequest request, CancellationToken cancellation)
         {
             if (request == null)

@@ -65,15 +65,14 @@ namespace OnlineStore.DataAccess.Products.Repositories
                 .CountAsync(cancellation);
         }
 
-        //public async override Task<Product> GetAsync(int id)
-        //{
-        //    var entity = await DbContext.FindAsync<Product>(id);
-
-        //    await DbContext.Entry(entity)
-        //        .Reference(x => x.Category)
-        //        .LoadAsync();
-
-        //    return entity;
-        //}
+        public override Task<Product> GetAsync(int id)
+        {
+            return ReadOnlyDbContext
+                .Set<Product>()
+                .Where(p => p.Id == id)
+                .Where(p => !p.IsDeleted)
+                .Include(x => x.Images)                
+                .FirstOrDefaultAsync();
+        }
     }
 }

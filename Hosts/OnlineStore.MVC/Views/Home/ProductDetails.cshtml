@@ -1,0 +1,103 @@
+﻿@using OnlineStore.Contracts.Products;
+
+@model ShortProductDto
+
+<div class="container mt-5">
+    <div class="row">
+        <!-- Левый блок: изображения товара -->
+        <div class="col-md-6">
+            <!-- Главное изображение -->
+            <div class="main-image text-center mb-3">
+                <a href="#" data-toggle="modal" data-target="#mainImageModal">
+                    <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid" />
+                </a>
+            </div>
+
+            <!-- Карусель остальных изображений -->
+            @if (Model.ImagesUrls != null && Model.ImagesUrls.Any())
+            {
+                <div id="productImagesCarousel" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        @for (var i = 0; i < Model.ImagesUrls.Count(); i++)
+                        {
+                            var imageUrl = Model.ImagesUrls[i];
+                            <div class="carousel-item @(i == 0 ? "active" : "")">
+                                <a href="#" data-toggle="modal" data-target="#imageModal-@i">
+                                    <img src="@imageUrl" class="d-block w-100" alt="Image @i" />
+                                </a>
+                            </div>
+                        }
+                    </div>
+                    <a class="carousel-control-prev" href="#productImagesCarousel" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" style="background-color: black;" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#productImagesCarousel" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" style="background-color: black;" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+            }
+        </div>
+
+        <!-- Правый блок: информация о товаре -->
+        <div class="col-md-6">
+            <h2>@Model.Name</h2>
+            <p>@Model.Description</p>
+            <p class="price font-weight-bold">Цена: @Model.Price.ToString("C")</p>
+            <p class="stock">Доступное количество: @Model.StockQuantity</p>
+
+            <!-- Форма добавления в корзину -->
+            <form id="addToCartForm" method="post" action="@Url.Action("AddToCart", "Cart")">
+                <input type="hidden" name="id" value="@Model.Id" />
+
+                <!-- Переключатель количества -->
+                <div class="form-group">
+                    <label for="quantity">Количество:</label>
+                    <input type="number" id="quantity" name="quantity" class="form-control" value="1" min="1" max="@Model.StockQuantity" />
+                </div>
+
+                <!-- Кнопка добавления в корзину -->
+                <button type="submit" class="btn btn-primary">Добавить в корзину</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для главного изображения -->
+<div class="modal fade" id="mainImageModal" tabindex="-1" role="dialog" aria-labelledby="mainImageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mainImageModalLabel">Главное изображение</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальные окна для остальных изображений -->
+@for (var i = 0; i < Model.ImagesUrls.Count(); i++)
+{
+    var imageUrl = Model.ImagesUrls[i];
+    <div class="modal fade" id="imageModal-@i" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel-@i" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel-@i">Изображение @i</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <img src="@imageUrl" alt="Image @i" class="img-fluid" />
+                </div>
+            </div>
+        </div>
+    </div>
+}

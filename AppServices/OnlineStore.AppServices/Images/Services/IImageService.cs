@@ -15,6 +15,8 @@ namespace OnlineStore.AppServices.Images.Services
 
         Task<ImageDto> GetImageDtoAsync(int id, CancellationToken cancellation);
 
+        string[] GetImagesUrls(ProductImage[] images);
+
         Task<IReadOnlyCollection<string>> SaveImagesAsync(List<IFormFile> ImageFiles, CancellationToken cancellation);
 
         Task<ProductImage[]> SaveProductImagesAsync(string[] imagesUrls, Product product, CancellationToken cancellation);

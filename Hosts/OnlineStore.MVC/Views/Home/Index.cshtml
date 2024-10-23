@@ -12,7 +12,7 @@
                         <h5 class="card-title">@product.Name</h5>
                         <p class="card-text">@product.Description</p>
                         <p class="card-text text-success">Цена: @product.Price.ToString("C")</p>
-                        <a href="@Url.Action("Details", "Product", new { id = product.Id })" class="btn btn-primary">Подробнее</a>
+                        <a href="@Url.Action("Details", "Home", new { id = product.Id })" class="btn btn-primary">Подробнее</a>
                         <button class="btn btn-success add-to-cart-btn" data-product-id="@product.Id">Добавить в корзину</button>
                     </div>
                 </div>

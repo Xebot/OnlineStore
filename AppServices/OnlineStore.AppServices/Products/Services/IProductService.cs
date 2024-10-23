@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using OnlineStore.Contracts.Common;
+﻿using OnlineStore.Contracts.Common;
 using OnlineStore.Contracts.Products;
 
 namespace OnlineStore.AppServices.Products.Services
@@ -22,5 +21,12 @@ namespace OnlineStore.AppServices.Products.Services
         /// <param name="productDto">Транспортная модель товара.</param>
         /// <param name="cancellation">Токен отмены операции.</param>
         Task AddProductAsync(ShortProductDto productDto, CancellationToken cancellation);
+
+        /// <summary>
+        /// Возвращает информацию о продукте по его идентификатору.
+        /// </summary>
+        /// <param name="productId">Идентификатор продукта.</param>
+        /// <param name="cancellation">Токен отмены операции.</param>
+        Task<ShortProductDto> GetProductByIdAsync(int productId, CancellationToken cancellation);
     }
 }

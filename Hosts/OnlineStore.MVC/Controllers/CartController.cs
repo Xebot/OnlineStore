@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Cors.Infrastructure;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using OnlineStore.AppServices.Carts.Services;
 
 namespace OnlineStore.MVC.Controllers
@@ -18,7 +17,8 @@ namespace OnlineStore.MVC.Controllers
         {
             await _cartService.AddProductToCartAsync(id, cancellation);
             var cartCount = await _cartService.GetCartItemCountAsync(cancellation);
-            return Json(new { success = true, cartCount });
+
+            return RedirectToAction("Index","Home");
         }
 
         [HttpGet]

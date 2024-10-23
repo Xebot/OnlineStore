@@ -53,16 +53,16 @@ namespace OnlineStore.MVC.Controllers
             return Ok();
         }
 
-        //public Task<IActionResult> Details(int id)
-        //{
-        //    var product = _productService.GetProductById(id);
-        //    if (product == null)
-        //    {
-        //        return NotFound();
-        //    }
+        public async Task<IActionResult> Details(int id, CancellationToken cancellation)
+        {
+            var product = await _productService.GetProductByIdAsync(id, cancellation);
+            if (product == null)
+            {
+                return NotFound();
+            }
 
-        //    return View(product);
-        //}
+            return View("ProductDetails", product);
+        }
 
         [Authorize(Roles ="User")]
         public IActionResult Privacy()
