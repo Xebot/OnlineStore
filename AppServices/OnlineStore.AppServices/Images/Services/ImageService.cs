@@ -1,5 +1,5 @@
-﻿using MassTransit.Configuration;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using OnlineStore.AppServices.Images.Repositories;
 using OnlineStore.Contracts.Images;
 using OnlineStore.Domain.Entities;
@@ -9,11 +9,14 @@ namespace OnlineStore.AppServices.Images.Services
     public sealed class ImageService : IImageService
     {
         private readonly IImageRepository _repository;
+        private readonly ILogger<ImageService> _logger;
 
         public ImageService(
-            IImageRepository repository)
+            IImageRepository repository,
+            ILogger<ImageService> logger)
         {
             _repository = repository;
+            _logger = logger;
         }
 
         public async Task<ImageDto> GetImageDtoAsync(int id, CancellationToken cancellation)
@@ -84,6 +87,7 @@ namespace OnlineStore.AppServices.Images.Services
 
                 if (existingImage == null)
                 {
+                    _logger.LogError("Не найдена картинка с Id = {imageId}", imageId);
                     throw new Exception();//TODO: подумать
                 }
 

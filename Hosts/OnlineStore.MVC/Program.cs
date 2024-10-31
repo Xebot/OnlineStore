@@ -2,6 +2,7 @@ using Hangfire;
 using OnlineStore.AppServices.Common.Telegram.Services;
 using OnlineStore.ComponentRegistrar;
 using OnlineStore.MVC.Filters;
+using Serilog;
 
 namespace OnlineStore.MVC
 {
@@ -13,6 +14,12 @@ namespace OnlineStore.MVC
 
             // Add services to the container.
             builder.Services.AddControllersWithViews().AddNewtonsoftJson();
+
+            builder.Host.UseSerilog((context, services, configuration) =>
+                configuration.ReadFrom.Configuration(context.Configuration)
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day));
 
             OnlineStoreRegistrar.AddComponents(builder.Services, builder.Configuration);
 

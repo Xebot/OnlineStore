@@ -30,7 +30,7 @@ namespace OnlineStore.MVC.Controllers
         }
 
         [HttpPost]
-        public IActionResult DeleteImage([FromBody] ImageDeleteRequest imageUrl)
+        public IActionResult DeleteImage([FromBody] ImageDeleteRequest imageUrl, CancellationToken cancellation)
         {
             return Ok();
         }

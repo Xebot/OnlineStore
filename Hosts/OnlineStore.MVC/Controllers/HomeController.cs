@@ -34,6 +34,8 @@ namespace OnlineStore.MVC.Controllers
                 PageSize = 6
             }, cancellation);
 
+            _logger.LogInformation("Получено продуктов: {Count}, Страница: {PageNumber}, Всего продуктов: {TotalCount}", result.Result.Count, result.PageNumber, result.TotalCount);
+
             return View(result);
         }
 
