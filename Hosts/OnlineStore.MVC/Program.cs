@@ -11,6 +11,7 @@ namespace OnlineStore.MVC
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Configuration.AddEnvironmentVariables();
 
             // Add services to the container.
             builder.Services.AddControllersWithViews().AddNewtonsoftJson();
@@ -47,17 +48,17 @@ namespace OnlineStore.MVC
                 Authorization = new[] { new HangfireAuthorizationFilter() }
             });
 
-            using (var scope = app.Services.CreateScope())
-            {
-                //var recurringJobManager = scope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
-                //recurringJobManager.AddOrUpdate(
-                //    "process-orders-job",
-                //    () => scope.ServiceProvider.GetRequiredService<IProductService>().GetProductsAsync(),
-                //    Cron.Minutely());
+            //using (var scope = app.Services.CreateScope())
+            //{
+            //    //var recurringJobManager = scope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
+            //    //recurringJobManager.AddOrUpdate(
+            //    //    "process-orders-job",
+            //    //    () => scope.ServiceProvider.GetRequiredService<IProductService>().GetProductsAsync(),
+            //    //    Cron.Minutely());
 
-                var telegramService = scope.ServiceProvider.GetRequiredService<ITelegramService>();
-                await telegramService.SetWebhookAsync();
-            }
+            //    var telegramService = scope.ServiceProvider.GetRequiredService<ITelegramService>();
+            //    await telegramService.SetWebhookAsync();
+            //}
 
             app.MapControllerRoute(
                 name: "default",
