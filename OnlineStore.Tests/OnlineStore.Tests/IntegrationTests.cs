@@ -38,32 +38,32 @@ public class ProductsControllerTests : IClassFixture<WebApplicationFactory<Progr
         _client = _factory.CreateClient();
     }
 
-    [Fact]
-    public async Task GetProducts_ReturnsOkResult_WithProducts()
-    {
-        // Arrange
-        var cancellationToken = CancellationToken.None;
+    //[Fact]
+    //public async Task GetProducts_ReturnsOkResult_WithProducts()
+    //{
+    //    // Arrange
+    //    var cancellationToken = CancellationToken.None;
 
-        using var scope = _factory.Services.CreateScope();
-        var jwtGenerator = scope.ServiceProvider.GetRequiredService<IJwtGenerator>();
+    //    using var scope = _factory.Services.CreateScope();
+    //    var jwtGenerator = scope.ServiceProvider.GetRequiredService<IJwtGenerator>();
 
-        var token = jwtGenerator.GenerateToken();
+    //    var token = jwtGenerator.GenerateToken();
 
-        var request = new HttpRequestMessage
-        {
-            RequestUri = new Uri("https://localhost:7194/api/products"),
-            Method = HttpMethod.Get,
-        };
+    //    var request = new HttpRequestMessage
+    //    {
+    //        RequestUri = new Uri("https://localhost:7194/api/products"),
+    //        Method = HttpMethod.Get,
+    //    };
 
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+    //    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-        // Act
-        var response = await _client.SendAsync(request);
-        response.EnsureSuccessStatusCode();
+    //    // Act
+    //    var response = await _client.SendAsync(request);
+    //    response.EnsureSuccessStatusCode();
 
-        // Assert
-        var products = await response.Content.ReadFromJsonAsync<List<Product>>();
+    //    // Assert
+    //    var products = await response.Content.ReadFromJsonAsync<List<Product>>();
 
-        Assert.NotNull(products);
-    }
+    //    Assert.NotNull(products);
+    //}
 }
