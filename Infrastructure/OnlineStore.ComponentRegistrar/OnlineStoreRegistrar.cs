@@ -129,7 +129,7 @@ namespace OnlineStore.ComponentRegistrar
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IImageRepository, ImageRepository>();
-            services.AddScoped<ICartRepository, CartRepository>();
+            services.AddScoped<ICartRepository, CartRepository>()
         }
 
         private static void RegisterServices(IServiceCollection services, IConfiguration configuration)
