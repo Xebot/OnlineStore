@@ -40,7 +40,7 @@ namespace OnlineStore.AppServices.Images.Services
             var urls = new List<string>(images.Length);
             foreach(var image in images)
             {
-                urls.Add($"https://localhost:7194/images/{image.Id}");
+                urls.Add($"/images/{image.Id}");
             }
 
             return [.. urls];
@@ -57,7 +57,7 @@ namespace OnlineStore.AppServices.Images.Services
 
             var imageId = await _repository.SaveAsync(productImage, cancellation);
 
-            return $"https://localhost:7194/images/{imageId}";
+            return $"/images/{imageId}";
         }
 
         public async Task<IReadOnlyCollection<string>> SaveImagesAsync(List<IFormFile> ImageFiles, CancellationToken cancellation)
