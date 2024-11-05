@@ -44,7 +44,7 @@ namespace OnlineStore.MVC.Controllers
             var categories = await _categoryService.GetCategoriesAsync(cancellation);
 
             ViewBag.Categories = new SelectList(categories, "CategoryId", "Name");
-            return View();
+            return View("Index");
         }
 
         [HttpPost]
