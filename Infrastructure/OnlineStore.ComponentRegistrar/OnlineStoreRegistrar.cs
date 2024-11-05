@@ -77,18 +77,18 @@ namespace OnlineStore.ComponentRegistrar
                     };
                 });
 
-            services.AddMassTransit(x =>
-            {
-                x.UsingRabbitMq((context, cfg) =>
-                {
-                    cfg.Host("rabbitmq://localhost", h =>
-                    {
-                        h.Username("guest");
-                        h.Password("guest");
-                    });
-                    cfg.ConfigureEndpoints(context);
-                });
-            });
+            //services.AddMassTransit(x =>
+            //{
+            //    x.UsingRabbitMq((context, cfg) =>
+            //    {
+            //        cfg.Host("moose.rmq.cloudamqp.com/wfzepjxr", h =>
+            //        {
+            //            h.Username("wfzepjxr");
+            //            h.Password("PiqVddRjxZVOsGIdcyzBZr1gg0kiDao5");
+            //        });
+            //        cfg.ConfigureEndpoints(context);
+            //    });
+            //});
 
             var botConfig = configuration.GetSection("TelegramBotOptions").Get<TelegramBotOptions>();            
 
@@ -157,7 +157,7 @@ namespace OnlineStore.ComponentRegistrar
             services.AddScoped<IEventAccumulator, EventAccumulator>();
             services.AddScoped<ITelegramService, TelegramService>();
 
-            services.AddScoped<IMessageQueueService, MessageQueueService>();
+            //services.AddScoped<IMessageQueueService, MessageQueueService>();
 
             #region Notifications
             services.AddScoped<INotificationStrategy, EmailNotificationStrategy>();
