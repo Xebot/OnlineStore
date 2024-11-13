@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "OnlineStore.MessageQueue.Daemon": {
+      "commandName": "Project"
+    },
+    "Container (Dockerfile)": {
+      "commandName": "Docker"
+    }
+  }
+}

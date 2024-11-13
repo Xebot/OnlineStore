@@ -1,0 +1,188 @@
+﻿@using OnlineStore.Contracts.Products;
+
+@model ShortProductDto
+
+@{
+    ViewData["Title"] = "Добавление нового товара";
+}
+
+<h2>Add Product</h2>
+
+<form id="productForm" asp-action="AddProduct" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="Name">Название товара</label>
+        <input type="text" class="form-control" id="Name" name="Name" asp-for="Name" required />
+    </div>
+
+    <div class="form-group">
+        <label for="Description">Описание</label>
+        <textarea class="form-control" id="Description" name="Description" asp-for="Description" required></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="Price">Цена</label>
+        <input type="number" class="form-control" id="Price" name="Price" asp-for="Price" step="0.01" required />
+    </div>
+
+    <div class="form-group">
+        <label for="StockQuantity">Доступное количество</label>
+        <input type="number" class="form-control" id="StockQuantity" name="StockQuantity" asp-for="StockQuantity" required />
+    </div>
+
+    <div class="form-group">
+        <label for="CategoryId">Категория</label>
+        <select class="form-control" asp-for="CategoryId" asp-items="ViewBag.Categories">
+            <option value="">Select a Category</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="ImageFile">Обложка товара</label>
+        <input type="file" class="form-control" id="ImageFile" name="ImageFile" required />
+    </div>
+
+    <div id="mainImagePreview"></div>
+
+    <div class="form-group">
+        <label for="ImageFiles">Дополнительные изображения</label>
+        <input type="file" class="form-control" id="ImageFiles" name="ImageFiles" multiple />
+    </div>
+
+    <div id="imagePreviews"></div>
+
+    <button type="submit" class="btn btn-primary">Add Product</button>
+</form>
+
+<script>
+    //главное изображение
+    document.getElementById('ImageFile').addEventListener('change', function () {
+        const file = this.files[0];
+        const formData = new FormData();
+        formData.append('ImageFiles', file);
+
+        fetch('@Url.Action("UploadImages", "Images")', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                const mainImagePreview = document.getElementById('mainImagePreview');
+                mainImagePreview.innerHTML = '';
+                const imgContainer = document.createElement('div');
+                imgContainer.style.position = 'relative';
+                imgContainer.style.display = 'inline-block';
+                imgContainer.style.marginRight = '10px';
+
+                const imgElement = document.createElement('img');
+                const url = data[0];
+                imgElement.src = url;
+                imgElement.style.width = '150px';
+                imgContainer.appendChild(imgElement);
+
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'X';
+                deleteButton.style.position = 'absolute';
+                deleteButton.style.top = '5px';
+                deleteButton.style.right = '5px';
+                deleteButton.style.backgroundColor = 'red';
+                deleteButton.style.color = 'white';
+                deleteButton.style.border = 'none';
+                deleteButton.style.borderRadius = '50%';
+                deleteButton.style.cursor = 'pointer';
+                deleteButton.addEventListener('click', function () {
+                    if (confirm('Вы уверены что хотите удалить изображение?')) {
+                        event.preventDefault();
+                        fetch('@Url.Action("DeleteImage", "Images")', {
+                            method: 'POST',
+                            body: JSON.stringify({ imageUrl: url }),
+                            headers: { 'Content-Type': 'application/json' }
+                        }).then(response => {
+                            if (response.ok) {
+                                imgContainer.remove();
+                                document.querySelector(`input[name="ImageUrl"]`).remove();
+                            }
+                        });
+                    }
+                });
+
+                imgContainer.appendChild(deleteButton);
+                mainImagePreview.appendChild(imgContainer);
+
+                // Добавляем URL главного изображения в скрытое поле
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'ImageUrl';
+                input.value = url;
+                document.getElementById('productForm').appendChild(input);
+            });
+    });
+
+    //остальные
+    document.getElementById('ImageFiles').addEventListener('change', function () {
+        const files = this.files;
+        const formData = new FormData();
+
+        for (let i = 0; i < files.length; i++) {
+            formData.append('ImageFiles', files[i]);
+        }
+
+        fetch('@Url.Action("UploadImages", "Images")', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                const imagePreviews = document.getElementById('imagePreviews');
+                imagePreviews.innerHTML = '';
+
+                data.forEach((url, index) => {
+                    const imgContainer = document.createElement('div');
+                    imgContainer.style.position = 'relative';
+                    imgContainer.style.display = 'inline-block';
+                    imgContainer.style.marginRight = '10px';
+
+                    const imgElement = document.createElement('img');
+                    imgElement.src = url;
+                    imgElement.style.width = '150px';
+                    imgContainer.appendChild(imgElement);
+
+                    // Кнопка для удаления изображения
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'X';
+                    deleteButton.style.position = 'absolute';
+                    deleteButton.style.top = '5px';
+                    deleteButton.style.right = '5px';
+                    deleteButton.style.backgroundColor = 'red';
+                    deleteButton.style.color = 'white';
+                    deleteButton.style.border = 'none';
+                    deleteButton.style.borderRadius = '50%';
+                    deleteButton.style.cursor = 'pointer';
+                    deleteButton.addEventListener('click', function () {
+                        if (confirm('Вы уверены что хотите удалить изображение?')) {
+                            event.preventDefault();
+                            fetch('@Url.Action("DeleteImage", "Images")', {
+                                method: 'POST',
+                                body: JSON.stringify({ imageUrl: url }),
+                                headers: { 'Content-Type': 'application/json' }
+                            }).then(response => {
+                                if (response.ok) {
+                                    imgContainer.remove();
+                                    document.querySelector(`input[name="ImagesUrls"][value="${url}"]`).remove();
+                                }
+                            });
+                        }
+                    });
+
+                    imgContainer.appendChild(deleteButton);
+                    imagePreviews.appendChild(imgContainer);
+
+                    // Добавляем ссылки на изображения в скрытые поля формы
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'ImagesUrls';
+                    input.value = url;
+                    document.getElementById('productForm').appendChild(input);
+                });
+            });
+    });
+</script>

@@ -1,13 +1,28 @@
+using Hangfire;
+using OnlineStore.AppServices.Common.Telegram.Services;
+using OnlineStore.ComponentRegistrar;
+using OnlineStore.MVC.Filters;
+using Serilog;
+
 namespace OnlineStore.MVC
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Configuration.AddEnvironmentVariables();
 
             // Add services to the container.
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllersWithViews().AddNewtonsoftJson();
+
+            builder.Host.UseSerilog((context, services, configuration) =>
+                configuration.ReadFrom.Configuration(context.Configuration)
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day));
+
+            OnlineStoreRegistrar.AddComponents(builder.Services, builder.Configuration);
 
             var app = builder.Build();
 
@@ -24,7 +39,26 @@ namespace OnlineStore.MVC
 
             app.UseRouting();
 
+            OnlineStoreRegistrar.RegisterMiddlewares(app);
+
             app.UseAuthorization();
+
+            app.UseHangfireDashboard("/hangfire", new DashboardOptions
+            {
+                Authorization = new[] { new HangfireAuthorizationFilter() }
+            });
+
+            //using (var scope = app.Services.CreateScope())
+            //{
+            //    //var recurringJobManager = scope.ServiceProvider.GetRequiredService<IRecurringJobManager>();
+            //    //recurringJobManager.AddOrUpdate(
+            //    //    "process-orders-job",
+            //    //    () => scope.ServiceProvider.GetRequiredService<IProductService>().GetProductsAsync(),
+            //    //    Cron.Minutely());
+
+            //    var telegramService = scope.ServiceProvider.GetRequiredService<ITelegramService>();
+            //    await telegramService.SetWebhookAsync();
+            //}
 
             app.MapControllerRoute(
                 name: "default",

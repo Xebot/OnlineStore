@@ -1,8 +1,73 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@using OnlineStore.Contracts.Products
+@model ProductsListDto
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mt-4">
+    <div class="row">
+        @foreach (var product in Model.Result)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <img class="card-img-top" src="@product.ImageUrl" alt="@product.Name" />
+                    <div class="card-body">
+                        <h5 class="card-title">@product.Name</h5>
+                        <p class="card-text">@product.Description</p>
+                        <p class="card-text text-success">Цена: @product.Price.ToString("C")</p>
+                        <a href="@Url.Action("Details", "Home", new { id = product.Id })" class="btn btn-primary">Подробнее</a>
+                        <button class="btn btn-success add-to-cart-btn" data-product-id="@product.Id">Добавить в корзину</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Пагинация -->
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            @if (Model.PageNumber > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", new { pageNumber = Model.PageNumber - 1 })">Назад</a>
+                </li>
+            }
+
+            <!-- Показ нескольких номеров страниц -->
+            @{
+                var pagesCount = Math.Ceiling((decimal)Model.TotalCount / Model.PageSize);
+            }
+            @for (var i = 1; i <= pagesCount; i++)
+            {
+                if (i == Model.PageNumber)
+                {
+                    <li class="page-item active">
+                        <span class="page-link">@i</span>
+                    </li>
+                }
+                else if (i <= 3 || i == Model.TotalCount || (i >= Model.PageNumber - 2 && i <= Model.PageNumber + 2))
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("Index", new { pageNumber = i })">@i</a>
+                    </li>
+                }
+                else if (i == 4)
+                {
+                    <li class="page-item">
+                        <span class="page-link">...</span>
+                    </li>
+                }
+                else if (i == pagesCount)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("Index", new { pageNumber = i })">@i</a>
+                    </li>
+                }
+            }
+
+            @if (Model.PageNumber < pagesCount)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", new { pageNumber = Model.PageNumber + 1 })">Вперед</a>
+                </li>
+            }
+        </ul>
+    </nav>
 </div>

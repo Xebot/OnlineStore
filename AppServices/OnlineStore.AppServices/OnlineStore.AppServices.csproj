@@ -7,12 +7,38 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Common\" />
-    <Folder Include="Orders\Models\" />
-    <Folder Include="Orders\Repositories\" />
-    <Folder Include="Orders\Services\" />
-    <Folder Include="Orders\UseCases\" />
-    <Folder Include="Users\" />
+    <Compile Remove="ProductAttributes\Model\**" />
+    <Compile Remove="Orders\Models\**" />
+    <Compile Remove="Orders\Services\**" />
+    <Compile Remove="Orders\UseCases\**" />
+    <Compile Remove="Users\**" />
+    <EmbeddedResource Remove="ProductAttributes\Model\**" />
+    <EmbeddedResource Remove="Orders\Models\**" />
+    <EmbeddedResource Remove="Orders\Services\**" />
+    <EmbeddedResource Remove="Orders\UseCases\**" />
+    <EmbeddedResource Remove="Users\**" />
+    <None Remove="ProductAttributes\Model\**" />
+    <None Remove="Orders\Models\**" />
+    <None Remove="Orders\Services\**" />
+    <None Remove="Orders\UseCases\**" />
+    <None Remove="Users\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="MailKit" Version="4.8.0" />
+    <PackageReference Include="MassTransit" Version="8.3.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="8.0.2" />
+    <PackageReference Include="StackExchange.Redis" Version="2.8.12" />
+    <PackageReference Include="StackExchange.Redis.Extensions.Core" Version="10.2.0" />
+    <PackageReference Include="Telegram.Bot" Version="19.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Clients\OnlineStore.ApiClient\OnlineStore.ApiClient.csproj" />
+    <ProjectReference Include="..\..\Contracts\OnlineStore.Contracts\OnlineStore.Contracts.csproj" />
+    <ProjectReference Include="..\..\Domain\OnlineStore.Domain\OnlineStore.Domain.csproj" />
   </ItemGroup>
 
 </Project>
