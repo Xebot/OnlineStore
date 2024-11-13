@@ -18,5 +18,5 @@ RUN dotnet publish "./OnlineStore.MVC.csproj" -c $BUILD_CONFIGURATION -o /app/pu
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "OnlineStore.MVC.dll"]
