@@ -30,11 +30,11 @@ jobs:
 
       # Сборка тестов
       - name: Build tests
-        run: dotnet build --no-restore --configuration Release OnlineStore.Tests/OnlineStore.Tests.csproj
+        run: dotnet build --no-restore --configuration Release OnlineStore.Tests/OnlineStore.Tests/OnlineStore.Tests.csproj
 
       # Запуск тестов
       - name: Run tests
-        run: dotnet test --no-build --verbosity normal OnlineStore.Tests/OnlineStore.Tests.csproj
+        run: dotnet test --no-build --verbosity normal OnlineStore.Tests/OnlineStore.Tests/OnlineStore.Tests.csproj
 
       # Сборка Docker-образа (без публикации в реестр)
       - name: Build Docker image
