@@ -28,8 +28,8 @@ jobs:
       - name: Build project
         run: dotnet build --no-restore --configuration Release
 
-      #- name: Run tests
-      #  run: dotnet test --no-build --verbosity normal
+      - name: Run tests
+        run: dotnet test --no-build --verbosity normal
 
       # Сборка Docker-образа (без публикации в реестр)
       - name: Build Docker image
@@ -53,10 +53,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      # Сохранение Docker-образа
-      #- name: Save Docker image
-      #  run: docker save myapp:latest -o myapp.tar
-
       # Загрузка артефакта с Docker-образом
       - name: Download Docker image artifact
         uses: actions/download-artifact@v3
