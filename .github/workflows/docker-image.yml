@@ -93,8 +93,13 @@ jobs:
           script: |
             # Загрузка Docker-образа
             docker load -i /home/youruser/myapp.tar
+            # Проверка, что образ успешно загружен
+            if ! docker images myapp:latest --format "{{.Repository}}:{{.Tag}}" | grep -q "myapp:latest"; then
+            echo "Error: Docker image myapp:latest not found!"
+            exit 1
+            fi
             # Остановка старого контейнера
             docker stop myapp || true
             docker rm myapp || true
             # Запуск контейнера с передачей переменной окружения (строки подключения)
-            docker run -d --name myapp -p 80:80 -e ConnectionStrings__DefaultConnection=${{ secrets.ConnectionStrings__DefaultConnection }} myapp:latest
+            docker run -d --name myapp -p 8080:8080 -e ConnectionStrings__DefaultConnection=${{ secrets.ConnectionStrings__DefaultConnection }} myapp:latest
