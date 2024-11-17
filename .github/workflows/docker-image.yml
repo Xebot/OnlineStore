@@ -33,7 +33,7 @@ jobs:
 
       # Сборка Docker-образа (без публикации в реестр)
       - name: Build Docker image
-        run: docker build -t myapp:latest .
+        run: docker build -t myapp:latest ./Hosts/OnlineStore.MVC
 
   deploy:
     runs-on: ubuntu-latest
