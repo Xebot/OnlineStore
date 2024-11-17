@@ -34,7 +34,9 @@ jobs:
 
       # Запуск тестов
       - name: Run tests
-        run: dotnet test --no-build --verbosity normal OnlineStore.Tests/OnlineStore.Tests/OnlineStore.Tests.csproj
+        run: |
+          dotnet test /home/runner/work/OnlineStore/OnlineStore/OnlineStore.Tests/OnlineStore.Tests.csproj --configuration Release --no-build --verbosity normal
+        #run: dotnet test --no-build --verbosity normal OnlineStore.Tests/OnlineStore.Tests/OnlineStore.Tests.csproj
 
       # Сборка Docker-образа (без публикации в реестр)
       - name: Build Docker image
