@@ -21,15 +21,10 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      # Указываем рабочую директорию для приложения
-      - name: Set working directory
-        run: cd hosts/onlinestore.mvc
-
       # Собираем Docker-образ из папки с приложением
       - name: Build Docker image
-        run: |
-          cd hosts/onlinestore.mvc
-          docker build -t myapp:latest .      
+        run: 
+          docker build -t myapp:latest ./Hosts/OnlineStore.MVC      
 
       # Сборка и тестирование .NET приложения
       #- name: Restore dependencies
