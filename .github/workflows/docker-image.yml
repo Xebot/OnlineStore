@@ -50,7 +50,7 @@ jobs:
 
       # Копирование Docker-образа на сервер
       - name: Copy Docker image to remote server
-        uses: appleboy/scp-action@v1.1.0
+        uses: appleboy/scp-action@v0
         with:
           host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
@@ -60,7 +60,7 @@ jobs:
 
       # Деплой на сервере
       - name: Deploy to server
-        uses: appleboy/ssh-action@v1.1.6
+        uses: appleboy/ssh-action@v0
         with:
           host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
