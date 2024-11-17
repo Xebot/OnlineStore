@@ -24,7 +24,7 @@ jobs:
       # Собираем Docker-образ из папки с приложением
       - name: Build Docker image
         run: 
-          docker build -t myapp:latest ./Hosts/OnlineStore.MVC      
+          docker build --file Hosts/OnlineStore.MVC/Dockerfile -t myapp:latest .     
 
       # Сборка и тестирование .NET приложения
       #- name: Restore dependencies
