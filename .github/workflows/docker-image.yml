@@ -44,6 +44,9 @@ jobs:
       - name: Check Docker image
         run: docker images
 
+      - name: Save Docker image
+        run: docker save myapp:latest -o myapp.tar
+
   deploy:
     runs-on: ubuntu-latest
     needs: build
