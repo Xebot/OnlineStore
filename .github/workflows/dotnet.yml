@@ -1,7 +1,4 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-
-name: .NET
+name: Docker Image CI
 
 on:
   push:
@@ -11,18 +8,93 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+      # Checkout кода
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Установка .NET SDK
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      # Сборка и тестирование .NET приложения
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build project
+        run: dotnet build --no-restore --configuration Release
+
+      #- name: Run tests
+      #  run: dotnet test --no-build --verbosity normal
+
+      # Сборка Docker-образа (без публикации в реестр)
+      - name: Build Docker image
+        run: docker build --file Hosts/OnlineStore.MVC/Dockerfile -t myapp:latest .
+
+      # Проверка наличия Docker-образа
+      - name: Check Docker image
+        run: docker images
+
+      # Сохранение Docker-образа как артефакт
+      - name: Save Docker image
+        run: docker save myapp:latest -o myapp.tar
+
+      - name: Upload Docker image as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: myapp-image
+          path: myapp.tar
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      # Сохранение Docker-образа
+      #- name: Save Docker image
+      #  run: docker save myapp:latest -o myapp.tar
+
+      # Загрузка артефакта с Docker-образом
+      - name: Download Docker image artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: myapp-image
+          path: .
+
+      # Проверка наличия Docker-архива
+      - name: Check downloaded file
+        run: ls -la myapp.tar
+
+      # Копирование Docker-образа на сервер
+      - name: Copy Docker image to remote server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          source: ./myapp.tar
+          target: /home/youruser/
+
+      # Деплой на сервере
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            # Загрузка Docker-образа
+            docker load -i /home/youruser/myapp.tar
+            # Проверка, что образ успешно загружен
+            if ! docker images myapp:latest --format "{{.Repository}}:{{.Tag}}" | grep -q "myapp:latest"; then
+            echo "Error: Docker image myapp:latest not found!"
+            exit 1
+            fi
+            # Остановка старого контейнера
+            docker stop myapp || true
+            docker rm myapp || true
+            # Запуск контейнера с передачей переменной окружения (строки подключения)
+            docker run -d --name myapp -p 8080:8080 -e ConnectionStrings__DefaultConnection=${{ secrets.ConnectionStrings__DefaultConnection }} myapp:latest
