@@ -40,6 +40,10 @@ jobs:
       - name: Build Docker image
         run: docker build --file Hosts/OnlineStore.MVC/Dockerfile -t myapp:latest .
 
+      # Проверка наличия Docker-образа
+      - name: Check Docker image
+        run: docker images
+
   deploy:
     runs-on: ubuntu-latest
     needs: build
