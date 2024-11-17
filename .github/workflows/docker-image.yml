@@ -60,7 +60,7 @@ jobs:
 
       # Деплой на сервере
       - name: Deploy to server
-        uses: appleboy/ssh-action@v1.1.7
+        uses: appleboy/ssh-action@v1.1.0
         with:
           host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
