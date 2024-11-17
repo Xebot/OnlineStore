@@ -1,0 +1,71 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout кода
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Установка .NET SDK
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      # Сборка и тестирование .NET приложения
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build project
+        run: dotnet build --configuration Release
+
+      - name: Run tests
+        run: dotnet test --no-build --verbosity normal
+
+      # Сборка Docker-образа (без публикации в реестр)
+      - name: Build Docker image
+        run: docker build -t myapp:latest .
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      # Сохранение Docker-образа
+      - name: Save Docker image
+        run: docker save myapp:latest -o myapp.tar
+
+      # Копирование Docker-образа на сервер
+      - name: Copy Docker image to remote server
+        uses: appleboy/scp-action@v1.1.0
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          source: ./myapp.tar
+          target: /home/youruser/
+
+      # Деплой на сервере
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v1.1.7
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            # Загрузка Docker-образа
+            docker load -i /home/youruser/myapp.tar
+            # Остановка старого контейнера
+            docker stop myapp || true
+            docker rm myapp || true
+            # Запуск контейнера с передачей переменной окружения (строки подключения)
+            docker run -d --name myapp -p 80:80 -e ConnectionStrings__DefaultConnection=${{ secrets.ConnectionStrings__DefaultConnection }} myapp:latest
+
