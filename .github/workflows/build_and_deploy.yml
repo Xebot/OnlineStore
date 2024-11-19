@@ -1,3 +1,5 @@
+name: Docker Image CI
+
 on:
   push:
     branches: [ "master" ]
@@ -24,7 +26,18 @@ jobs:
         run: dotnet restore
 
       - name: Build project
-        run: dotnet build --configuration Release
+        run: dotnet build --no-restore --configuration Release
+
+      # Сборка тестов
+      - name: Build tests
+        run: dotnet build --no-restore --configuration Release OnlineStore.Tests/OnlineStore.Tests/OnlineStore.Tests.csproj
+
+      # Запуск тестов
+      - name: Run tests
+        run: |
+          dotnet test /home/runner/work/OnlineStore/OnlineStore/OnlineStore.Tests/OnlineStore.Tests.csproj --configuration Release --no-build --verbosity normal
+          dotnet test /home/runner/work/OnlineStore/OnlineStore/OnlineStore.Tests/OnlineStore.Tests/bin/Release/net8.0/OnlineStore.Tests.dll --configuration Release --no-build --verbosity normal
+        #run: dotnet test --no-build --verbosity normal OnlineStore.Tests/OnlineStore.Tests/OnlineStore.Tests.csproj
 
       # Сборка Docker-образа (без публикации в реестр)
       - name: Build Docker image
@@ -47,7 +60,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
-
     steps:
       # Загрузка артефакта с Docker-образом
       - name: Download Docker image artifact
@@ -80,10 +92,13 @@ jobs:
           script: |
             # Загрузка Docker-образа
             docker load -i /home/youruser/myapp.tar
-            # Остановка старого контейнера (если он существует)
-            docker stop myapp1 || true
-            docker rm myapp1 || true
-            # Запуск нового контейнера с переменными окружения
-            docker run -d --name myapp1 -p 8080:8080 \
-              -e ConnectionStrings__DefaultConnection="${{ secrets.ConnectionStrings__DefaultConnection }}" \
-              myapp:latest
+            # Проверка, что образ успешно загружен
+            if ! docker images myapp:latest --format "{{.Repository}}:{{.Tag}}" | grep -q "myapp:latest"; then
+            echo "Error: Docker image myapp:latest not found!"
+            exit 1
+            fi
+            # Остановка старого контейнера
+            docker stop myapp || true
+            docker rm myapp || true
+            # Запуск контейнера с передачей переменной окружения (строки подключения)
+            docker run -d --name myapp -p 8080:8080 -e ConnectionStrings__DefaultConnection=${{ secrets.ConnectionStrings__DefaultConnection }} myapp:latest
