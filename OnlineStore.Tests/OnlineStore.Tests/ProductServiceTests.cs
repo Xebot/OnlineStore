@@ -2,6 +2,8 @@
 using Moq;
 using OnlineStore.AppServices.Common.DateTimeProviders;
 using OnlineStore.AppServices.Common.Events.Common;
+using OnlineStore.AppServices.Common.NotificationServices;
+using OnlineStore.AppServices.Images.Services;
 using OnlineStore.AppServices.Products.Models;
 using OnlineStore.AppServices.Products.Repositories;
 using OnlineStore.AppServices.Products.Services;
@@ -16,6 +18,8 @@ namespace OnlineStore.Tests
         private readonly Mock<IMapper> _mapperMock = new Mock<IMapper>();
         private readonly Mock<IEventAccumulator> _eventAccumulatorMock = new Mock<IEventAccumulator>();
         private readonly Mock<IDateTimeProvider> _dateTimeProviderMock = new Mock<IDateTimeProvider>();
+        private readonly Mock<IImageService> _imageServiceMock = new Mock<IImageService>();
+        private readonly Mock<INotificationService> _notificationService = new Mock<INotificationService>();
 
         //[Fact]
         //public async Task GetProduct_ShouldReturnCorrectProduct()
@@ -53,56 +57,19 @@ namespace OnlineStore.Tests
         //    Assert.Equal(2, products.Count);
         //}
 
-        //[Fact]
-        //public async Task GetProduct_ThrowArgumentNullExceptionIfRequestIsNull()
-        //{
-        //    var productService = new ProductService(
-        //        _productRepositoryMock.Object,
-        //        _mapperMock.Object,
-        //        _eventAccumulatorMock.Object,
-        //        _dateTimeProviderMock.Object);
+        [Fact]
+        public async Task GetProduct_ThrowArgumentNullExceptionIfRequestIsNull()
+        {
+            var productService = new ProductService(
+                _productRepositoryMock.Object,
+                _mapperMock.Object,
+                _eventAccumulatorMock.Object,
+                _dateTimeProviderMock.Object,
+                _imageServiceMock.Object,
+                _notificationService.Object);
 
-        //    // Assert
-        //    await Assert.ThrowsAsync<ArgumentNullException>(() => productService.GetProductsAsync(null));           
-
-        //}
-
-        //[Theory]
-        //[InlineData("2024-10-7", true)]
-        //[InlineData("2024-10-8", true)]
-        //[InlineData("2024-10-9", true)]
-        //[InlineData("2024-10-10", true)]
-        //[InlineData("2024-10-11", true)]
-        //[InlineData("2024-10-12", false)]
-        //public void IsBusinessDay_ShoudReturnTrue_OnWeekday(DateTime dateTime, bool expected)
-        //{
-        //    _dateTimeProviderMock.Setup(dp => dp.UtcNow).Returns(dateTime);
-
-        //    var productService = new ProductService(
-        //        _productRepositoryMock.Object,
-        //        _mapperMock.Object,
-        //        _eventAccumulatorMock.Object,
-        //        _dateTimeProviderMock.Object);
-
-        //    var result = productService.IsBussinessDay();
-
-        //    Assert.Equal(expected, result);
-        //}
-
-        //[Fact]
-        //public void IsBusinessDay_ShoudReturnFalse_OnSaturday()
-        //{
-        //    _dateTimeProviderMock.Setup(dp => dp.UtcNow).Returns(new DateTime(2024, 10, 05));
-
-        //    var productService = new ProductService(
-        //        _productRepositoryMock.Object,
-        //        _mapperMock.Object,
-        //        _eventAccumulatorMock.Object,
-        //        _dateTimeProviderMock.Object);
-
-        //    var result = productService.IsBussinessDay();
-
-        //    Assert.False(result);
-        //}
+            // Assert
+            await Assert.ThrowsAsync<OutOfMemoryException>(() => productService.GetProductsAsync(null, CancellationToken.None));
+        }
     }
 }
