@@ -81,9 +81,9 @@ jobs:
             # Загрузка Docker-образа
             docker load -i /home/youruser/myapp.tar
             # Остановка старого контейнера (если он существует)
-            docker stop myapp || true
-            docker rm myapp || true
+            docker stop myapp1 || true
+            docker rm myapp1 || true
             # Запуск нового контейнера с переменными окружения
-            docker run -d --name myapp -p 8080:8080 \
+            docker run -d --name myapp1 -p 8080:8080 \
               -e ConnectionStrings__DefaultConnection="${{ secrets.ConnectionStrings__DefaultConnection }}" \
               myapp:latest
