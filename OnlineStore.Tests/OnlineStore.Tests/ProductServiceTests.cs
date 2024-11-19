@@ -69,7 +69,7 @@ namespace OnlineStore.Tests
                 _notificationService.Object);
 
             // Assert
-            await Assert.ThrowsAsync<OutOfMemoryException>(() => productService.GetProductsAsync(null, CancellationToken.None));
+            await Assert.ThrowsAsync<ArgumentNullException>(() => productService.GetProductsAsync(null, CancellationToken.None));
         }
     }
 }
